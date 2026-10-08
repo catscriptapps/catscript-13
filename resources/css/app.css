@@ -1,0 +1,737 @@
+/*
+  /resources/css/app.css
+  
+*/
+
+/* |--------------------------------------------------------------------------
+| Tailwind CSS Directives
+|--------------------------------------------------------------------------
+|
+| These directives are mandatory. They are the entry point for Tailwind 
+| to inject its preflight, components, and utility classes. Crucially,
+| they also trigger the purging/tree-shaking process during the build.
+|
+*/
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* |--------------------------------------------------------------------------
+| Custom Styles (Optional)
+|--------------------------------------------------------------------------
+|
+| Any custom CSS you want to write can go here.
+| For example, you might want to hide the scrollbar for aesthetic reasons
+| or define simple global styles.
+|
+*/
+
+/* Example: Ensuring images are fluid */
+img {
+    height: auto;
+    max-width: 100%;
+}
+
+/* -------------------------------
+ Global Styles
+--------------------------------*/
+body {
+    font-family: "Quicksand", sans-serif;
+}
+
+/* No elastic "rubber-band" overscroll. Edge/Chrome on Windows (precision
+   touchpads, smooth-scroll mice) otherwise stretch the whole page past its
+   top/bottom edge — fixed elements included — so the sidebar appears to
+   slide down and open a white gap above it. The page now stops at its edges. */
+html,
+body {
+    overscroll-behavior-y: none;
+}
+
+#scroll-top {
+    position: fixed;
+    z-index: 9999;
+}
+
+/* Live-chat bubble (components/chat-widget.php): in the bottom-right corner,
+   and lifted to sit just above the scroll-to-top button (44px at bottom 24px)
+   while that's showing — utils/scroll-to-top.js toggles body.scroll-top-visible. */
+#chat-widget {
+    bottom: 24px;
+    transition: bottom 0.3s ease;
+}
+body.scroll-top-visible #chat-widget {
+    bottom: 80px;
+}
+@media (prefers-reduced-motion: reduce) {
+    #chat-widget { transition: none; }
+}
+
+/* === Tooltip Styling (Fancy Version) === */
+.tooltip {
+    position: fixed;
+    z-index: 9999;
+    background-color: #111827;
+    color: #f9fafb;
+    padding: 0.4rem 0.6rem;
+    font-size: 0.8125rem; /* matches text-xs in tailwind.config.js */
+    border-radius: 0.375rem;
+    white-space: nowrap;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    opacity: 0;
+    transform: translate(-50%, -0.5rem);
+    pointer-events: none;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.tooltip.show {
+    opacity: 1;
+    transform: translate(-50%, -0.75rem);
+}
+
+.tooltip::after {
+    content: "";
+    position: absolute;
+    bottom: -5px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 5px;
+    border-style: solid;
+    border-color: #111827 transparent transparent transparent;
+}
+
+.dark .tooltip {
+    background-color: #f9fafb;
+    color: #111827;
+}
+
+.dark .tooltip::after {
+    border-color: #f9fafb transparent transparent transparent;
+}
+
+/* === Form Shake Animations === */
+@layer utilities {
+    @keyframes shake {
+
+        0%,
+        100% {
+            transform: translateX(0);
+        }
+
+        20%,
+        60% {
+            transform: translateX(-6px);
+        }
+
+        40%,
+        80% {
+            transform: translateX(6px);
+        }
+    }
+
+    .animate-shake {
+        animation: shake 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+    }
+
+    @media (max-width: 640px) {
+        @keyframes shake-sm {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            20%,
+            60% {
+                transform: translateX(-10px);
+            }
+
+            40%,
+            80% {
+                transform: translateX(10px);
+            }
+        }
+
+        .animate-shake-sm {
+            animation: shake-sm 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+        }
+    }
+}
+
+/* Prevent browser default drag interactions */
+[draggable="true"],
+.drag-handle,
+.option-handle {
+    touch-action: manipulation;
+    -webkit-user-drag: none;
+}
+
+.drag-handle,
+.option-handle,
+[data-sortable] li {
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+    touch-action: manipulation;
+}
+
+/* Faded effect for marked-for-delete images */
+.marked-for-delete {
+    opacity: 0.4;
+    transition: opacity 0.2s ease-in-out;
+}
+
+/* Hide number spinners to save space and stop width-bloat */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type=number] {
+    -moz-appearance: textfield;
+}
+
+/* Force the inputs to stay small */
+.item-qty {
+    width: 47px !important;
+}
+
+.item-rate {
+    width: 47px !important;
+}
+
+/* Ensure the WYSIWYG area shows list styles */
+.item-desc-editable ul {
+    list-style-type: disc !important;
+    margin-left: 1.25rem !important;
+    padding-left: 0.5rem !important;
+}
+
+.item-desc-editable ol {
+    list-style-type: decimal !important;
+    margin-left: 1.25rem !important;
+    padding-left: 0.5rem !important;
+}
+
+/* Fix for Indentation */
+.item-desc-editable blockquote {
+    border-left: 2px solid #e5e7eb;
+    padding-left: 1rem;
+    margin-left: 1rem;
+    color: #6b7280;
+}
+
+/* |--------------------------------------------------------------------------
+| Custom Scrollbars
+|--------------------------------------------------------------------------
+|
+| Slim, rounded, and quiet at rest — a thin gray thread that only picks up
+| color on hover. Used on the main page scroll (html) and on the sidebar's
+| scrollable nav list (.custom-scrollbar). The sidebar nav also carries a
+| data-nav-accent attribute (primary/secondary/indigo/teal) per project, so
+| its hover color matches whichever project you're in instead of a single
+| generic accent.
+|
+*/
+@layer components {
+
+    /* Firefox: thin width + thumb/track color pair (no separate hover state) */
+    html {
+        scrollbar-width: thin;
+        scrollbar-color: theme('colors.gray.300') transparent;
+    }
+
+    html.dark {
+        scrollbar-color: theme('colors.gray.700') transparent;
+    }
+
+    /* WebKit/Blink: the main page scrollbar */
+    html::-webkit-scrollbar {
+        width: 11px;
+    }
+
+    html::-webkit-scrollbar-track {
+        @apply bg-transparent;
+    }
+
+    html::-webkit-scrollbar-thumb {
+        @apply bg-gray-300 dark:bg-gray-700;
+        border-radius: 9999px;
+        border: 3px solid transparent;
+        background-clip: padding-box;
+    }
+
+    html::-webkit-scrollbar-thumb:hover {
+        @apply bg-primary-500;
+        border: 3px solid transparent;
+        background-clip: padding-box;
+    }
+
+    /* WebKit/Blink: scoped scrollbars (sidebar nav, modals, etc.) */
+    .custom-scrollbar {
+        scrollbar-width: thin;
+        scrollbar-color: theme('colors.gray.300') transparent;
+    }
+
+    .dark .custom-scrollbar {
+        scrollbar-color: theme('colors.gray.700') transparent;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-track {
+        @apply bg-transparent;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+        @apply bg-gray-300 dark:bg-gray-700 rounded-full transition-colors;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        @apply bg-primary-500;
+    }
+
+    /* Per-project sidebar accent on hover, keyed off the nav's own data-nav-accent attribute */
+    nav[data-nav-accent="secondary"].custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        @apply bg-secondary-500;
+    }
+
+    nav[data-nav-accent="indigo"].custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        @apply bg-indigo-500;
+    }
+
+    nav[data-nav-accent="teal"].custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        @apply bg-teal-500;
+    }
+}
+
+[x-cloak] {
+    display: none !important;
+}
+
+/* 1. Base Tooltip Wrapper */
+[data-tooltip] {
+    position: relative;
+}
+
+/* 2. The Tooltip Box */
+[data-tooltip]::before {
+    content: attr(data-tooltip);
+    position: absolute;
+    /* Sidebar Default: Position to the right */
+    left: calc(100% + 12px);
+    top: 50%;
+    transform: translateY(-50%) scale(0.9);
+
+    background-color: #111827;
+    /* gray-900 */
+    color: white;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    /* Slightly smaller for a cleaner look */
+    font-weight: 600;
+    white-space: nowrap;
+    z-index: 100;
+
+    opacity: 0;
+    pointer-events: none;
+    /* Added transition-delay here (0.3s) */
+    transition: opacity 0.2s ease, transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transition-delay: 0s;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* 3. The Pointer (Arrow) */
+[data-tooltip]::after {
+    content: '';
+    position: absolute;
+    left: calc(100% + 6px);
+    top: 50%;
+    transform: translateY(-50%);
+    border-width: 6px 6px 6px 0;
+    border-color: transparent #111827 transparent transparent;
+
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+    transition-delay: 0s;
+    z-index: 100;
+}
+
+/* 4. Hover State with Delay */
+[data-tooltip]:hover::before,
+[data-tooltip]:hover::after {
+    opacity: 1;
+    transform: translateY(-50%) scale(1);
+    /* Only delay when ENTERING the hover */
+    transition-delay: 0.3s;
+}
+
+/* 5. Header Specific (Tooltip Below) */
+header [data-tooltip]::before {
+    left: 50%;
+    top: calc(100% + 12px);
+    transform: translateX(-50%) scale(0.9);
+}
+
+header [data-tooltip]:hover::before {
+    transform: translateX(-50%) scale(1);
+}
+
+header [data-tooltip]::after {
+    left: 50%;
+    top: calc(100% + 6px);
+    transform: translateX(-50%);
+    border-width: 0 6px 6px 6px;
+    border-color: transparent transparent #111827 transparent;
+}
+
+.tooltip-left::before {
+    left: auto;
+    right: calc(100% + 12px);
+}
+
+.tooltip-left::after {
+    left: auto;
+    right: calc(100% + 6px);
+    border-width: 6px 0 6px 6px;
+    border-color: transparent transparent transparent #111827;
+}
+
+/* Emoji Picker Custom Styles */
+.emoji-picker-popover {
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    animation: emoji-pop 0.2s ease-out;
+}
+
+@keyframes emoji-pop {
+    from {
+        opacity: 0;
+        transform: translateY(10px) scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Custom Scrollbar for the picker if you add more emojis later */
+.emoji-picker-popover::-webkit-scrollbar {
+    width: 4px;
+}
+
+.emoji-picker-popover::-webkit-scrollbar-thumb {
+    background: #ea580c;
+    /* primary-600 orange */
+    border-radius: 10px;
+}
+
+/* Float button for scrolling to latest comments */
+.scroll-latest-btn {
+    position: absolute;
+    bottom: 80px;
+    right: 20px;
+    z-index: 50;
+    transition: all 0.3s ease;
+}
+
+.scroll-latest-btn.hidden-btn {
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(10px);
+}
+
+@keyframes pulse-primary {
+
+    0%,
+    100% {
+        background-color: transparent;
+    }
+
+    50% {
+        background-color: rgba(139, 92, 246, 0.05);
+    }
+
+    /* Subtle primary pulse */
+}
+
+.row-saving {
+    animation: pulse-primary 1s infinite;
+}
+
+.row-saved-success {
+    background-color: rgba(16, 185, 129, 0.1) !important;
+    /* Emerald-500 tint */
+    transition: background-color 0.5s ease-out;
+}
+
+.row-save-error {
+    background-color: rgba(244, 63, 94, 0.1) !important;
+    /* Rose-500 tint */
+}
+
+/* Sort indicators */
+th[data-sort] {
+    position: relative;
+    user-select: none;
+}
+
+th[data-sort]::after {
+    content: '↕';
+    font-size: 10px;
+    margin-left: 4px;
+    opacity: 0.3;
+}
+
+th[data-sort].sort-asc::after {
+    content: '↑';
+    opacity: 1;
+}
+
+th[data-sort].sort-desc::after {
+    content: '↓';
+    opacity: 1;
+}
+
+[data-aos="orange-glow"] {
+    box-shadow: 0 0 0 rgba(252, 131, 43, 0);
+    transition-property: transform, box-shadow;
+}
+
+[data-aos="orange-glow"].aos-animate {
+    box-shadow: 0 0 20px rgba(252, 131, 43, 0.6);
+}
+/* |--------------------------------------------------------------------------
+| Sidebar navigation (partials/sidebar.php)
+|--------------------------------------------------------------------------
+|
+| Deep-navy panel, orange as the light source. The active item gets a warm
+| gradient wash, a glowing icon tile and an accent bar on the panel's edge.
+| .is-active is set server-side on first render and toggled by
+| utils/spa-router.js::updateActiveLink() on every partial navigation.
+|
+*/
+@layer components {
+    .sidebar-link {
+        @apply relative flex items-center gap-3 rounded-2xl px-2.5 py-2 text-white/65 font-medium transition-all duration-200;
+    }
+
+    .sidebar-link:hover {
+        @apply text-white bg-white/[0.06];
+    }
+
+    .sidebar-icon {
+        @apply flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl bg-white/[0.06] text-white/75 ring-1 ring-white/[0.06] transition-all duration-200;
+    }
+
+    .sidebar-icon > svg {
+        @apply h-[18px] w-[18px];
+    }
+
+    .sidebar-link:hover .sidebar-icon {
+        @apply bg-white/[0.12] text-white scale-105;
+    }
+
+    .sidebar-link.is-active {
+        @apply text-white font-semibold;
+        background: linear-gradient(90deg, rgb(249 115 22 / 0.24), rgb(249 115 22 / 0.04) 70%, transparent);
+    }
+
+    .sidebar-link.is-active .sidebar-icon {
+        @apply text-white ring-0;
+        background: linear-gradient(135deg, theme('colors.primary.400'), theme('colors.primary.600'));
+        box-shadow: 0 8px 20px -6px rgb(249 115 22 / 0.7);
+    }
+
+    /* Accent bar hugging the panel's left edge (nav has px-4 = 1rem) */
+    .sidebar-link.is-active::before {
+        content: '';
+        position: absolute;
+        left: -1rem;
+        top: 22%;
+        bottom: 22%;
+        width: 4px;
+        border-radius: 0 4px 4px 0;
+        background: theme('colors.primary.400');
+        box-shadow: 0 0 14px theme('colors.primary.500');
+    }
+
+    .sidebar-badge {
+        @apply inline-flex min-w-[1.35rem] h-[1.35rem] items-center justify-center rounded-full bg-primary-500 px-1.5 text-[11px] font-bold leading-none text-white shadow-md shadow-primary-500/40;
+    }
+
+    /* Collapsed rail: badge becomes a corner bubble on the icon tile */
+    .sidebar-badge-slot.is-collapsed {
+        @apply absolute top-0.5 right-3;
+    }
+
+    .sidebar-badge-slot.is-collapsed .sidebar-badge {
+        @apply min-w-[1.1rem] h-[1.1rem] px-1 text-[10px] ring-2 ring-secondary-900;
+    }
+
+    /* Guest "Try" tag on the browser-demo apps; a dot on the collapsed rail */
+    .sidebar-try-tag {
+        @apply inline-flex items-center rounded-md px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-primary-200 bg-primary-500/15 ring-1 ring-primary-400/40;
+    }
+
+    .sidebar-badge-slot.is-collapsed .sidebar-try-tag {
+        @apply h-2.5 w-2.5 p-0 rounded-full bg-primary-400 text-[0px] ring-2 ring-secondary-900;
+    }
+
+    /* Dark-panel scrollbar. overscroll-behavior: contain keeps a scroll
+       that reaches the end of the link list from spilling over into the page. */
+    .sidebar-scroll {
+        scrollbar-color: rgb(255 255 255 / 0.15) transparent;
+        overscroll-behavior: contain;
+    }
+
+    .sidebar-scroll::-webkit-scrollbar-thumb {
+        background-color: rgb(255 255 255 / 0.15) !important;
+    }
+}
+
+/* |--------------------------------------------------------------------------
+| Cash Flow chart roles (pages/cash-flow.php, utils/cash-flow/charts.js)
+|--------------------------------------------------------------------------
+|
+| In / out form a diverging pair (blue <-> red), validated with the dataviz
+| palette checker against these exact card surfaces (white; gray-900 in dark):
+| light CVD dE 21.6 / normal 32.3, dark CVD dE 19.2 / normal 29.0, all >= 3:1.
+| Lives here, not in the page, because the SPA router strips <style> tags
+| from partial page loads.
+|
+*/
+/* Chart roles (palette validated for these card surfaces; see
+   resources/js/utils/cash-flow/charts.js). */
+.cf-root {
+    --cf-in: #2a78d6;
+    --cf-out: #e34948;
+    --cf-net: #475569;
+    --cf-surface: #ffffff;
+    --cf-grid: #eceae4;
+    --cf-axis: #c3c2b7;
+    --cf-ink: #0b0b0b;
+    --cf-ink-2: #52514e;
+    --cf-muted: #898781;
+}
+html.dark .cf-root {
+    --cf-in: #3987e5;
+    --cf-out: #e66767;
+    --cf-net: #cbd5e1;
+    --cf-surface: #111827;
+    --cf-grid: #1f2937;
+    --cf-axis: #374151;
+    --cf-ink: #ffffff;
+    --cf-ink-2: #c3c2b7;
+    --cf-muted: #898781;
+}
+
+/* |--------------------------------------------------------------------------
+| Home page motion (pages/home.php, pages/home-page.js)
+|--------------------------------------------------------------------------
+|
+| Lives here, not in the page, because the SPA router strips <style> tags
+| from partial page loads (the old inline slideshow keyframes froze on SPA
+| navigation for exactly that reason). The crossfade is driven by
+| home-page.js toggling .is-active; each active slide slowly zooms out.
+| Everything here is switched off for prefers-reduced-motion.
+|
+*/
+.hero-slide {
+    opacity: 0;
+    transition: opacity 1.6s ease-in-out;
+}
+
+.hero-slide.is-active {
+    opacity: 1;
+    animation: heroKenBurns 8s ease-out forwards;
+}
+
+@keyframes heroKenBurns {
+    from { transform: scale(1.14); }
+    to   { transform: scale(1); }
+}
+
+@keyframes floatSoft {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-8px); }
+}
+
+.animate-float-soft {
+    animation: floatSoft 5s ease-in-out infinite;
+}
+
+@keyframes glowDrift {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    50%      { transform: translate(-30px, 20px) scale(1.12); }
+}
+
+.animate-glow-drift {
+    animation: glowDrift 14s ease-in-out infinite;
+}
+
+@keyframes gradientShift {
+    0%, 100% { background-position: 0% 50%; }
+    50%      { background-position: 100% 50%; }
+}
+
+.animate-gradient-shift {
+    background-size: 200% 200%;
+    animation: gradientShift 12s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .hero-slide { transition: none; }
+    .hero-slide.is-active,
+    .animate-float-soft,
+    .animate-glow-drift,
+    .animate-gradient-shift { animation: none; }
+}
+
+/*
+| TV screensaver drift (utils/screensaver.js). The X mover glides between the
+| left and right edges of the drift area while the Y mover inside it glides
+| between top and bottom; --saver-dx / --saver-dy (set from JS) are how far
+| each can travel. Two unrelated, slow periods trace a path that covers the
+| whole screen and never stops, so no lit pixel stays in one place. Only
+| `transform` is animated (translate3d), so it's GPU-composited and glides
+| smoothly — no layout work per frame. Deliberately NOT switched off for
+| reduced motion: the movement is what protects the screen (about 8px a
+| second).
+*/
+@keyframes saverDriftX {
+    from { transform: translate3d(0, 0, 0); }
+    to   { transform: translate3d(var(--saver-dx, 0px), 0, 0); }
+}
+
+@keyframes saverDriftY {
+    from { transform: translate3d(0, 0, 0); }
+    to   { transform: translate3d(0, var(--saver-dy, 0px), 0); }
+}
+
+.saver-drift-x {
+    animation: saverDriftX 173s ease-in-out infinite alternate;
+}
+
+.saver-drift-y {
+    animation: saverDriftY 101s ease-in-out infinite alternate;
+    animation-delay: -37s;
+}
+
+/* The home screensaver's logo breathes gently (utils/screensaver.js brand) —
+   a slow glow on top of the card's drift, so it's never a still, bright shape. */
+@keyframes saverBreathe {
+    0%, 100% { opacity: 0.72; }
+    50%      { opacity: 0.95; }
+}
+
+.saver-breathe {
+    animation: saverBreathe 8s ease-in-out infinite;
+}

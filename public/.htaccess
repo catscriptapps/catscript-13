@@ -1,0 +1,9 @@
+# Use PHP’s built-in router if using php -S, or fallback to index.php
+RewriteEngine On
+
+# Serve existing files directly
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule ^ - [L]
+
+# Otherwise route everything to index.php
+RewriteRule ^ index.php [L]
