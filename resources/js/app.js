@@ -6,6 +6,7 @@ import '../css/app.css';
 // 1. IMPORT Alpine and the Store FIRST
 import Alpine from 'alpinejs';
 import collapse from '@alpinejs/collapse';
+import { getThemePref, setThemePref, onSystemThemeChange } from './utils/theme.js';
 Alpine.plugin(collapse);
 
 // 2. Register global stores used by the layout (sidebar/header)
@@ -23,14 +24,20 @@ Alpine.effect(() => {
 // dark-mode button calls $store.theme.toggle() instead of duplicating this
 // logic (previously each header toggled the class directly and never wrote
 // to localStorage at all, so the choice never survived a reload).
+// pref is 'light' | 'dark' | 'system' (utils/theme.js); the header button
+// flips between explicit light and dark, Settings → Appearance can pick any.
 Alpine.store('theme', {
+  pref: getThemePref(),
   isDark: document.documentElement.classList.contains('dark'),
+  set(pref) {
+    this.pref = pref;
+    this.isDark = setThemePref(pref);
+  },
   toggle() {
-    this.isDark = !this.isDark;
-    document.documentElement.classList.toggle('dark', this.isDark);
-    localStorage.setItem('user-theme', this.isDark ? 'dark' : 'light');
+    this.set(this.isDark ? 'light' : 'dark');
   },
 });
+onSystemThemeChange((isDark) => { Alpine.store('theme').isDark = isDark; });
 
 // 3. Set global and start
 window.Alpine = Alpine;

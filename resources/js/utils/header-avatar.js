@@ -5,7 +5,7 @@
 // layouts/portal.php) lives in the layout shell, outside #main-content —
 // a loadPartial('profile'|'settings') refresh only ever swaps #main-content,
 // so it never touches the header on its own. Both profile-avatar.js and
-// settings-avatar.js (the two places a user can change their own avatar)
+// pages/settings-page.js (the two places a user can change their own avatar)
 // call this right after a successful upload/delete so the header updates
 // immediately instead of waiting for the next full page load.
 

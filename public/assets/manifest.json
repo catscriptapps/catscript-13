@@ -232,10 +232,10 @@
     "src": "resources/js/pages/settings-page.js",
     "isEntry": true,
     "imports": [
-      "_animations-sA--LafU.min.js",
-      "_upload-modal-BDCuzSXE.min.js",
       "_toast-CjCHkGmx.min.js",
-      "_spa-router-CitH-Pvp.min.js",
+      "_confirm-VjUZGJTv.min.js",
+      "_escape-html-CVt4dYnb.min.js",
+      "_upload-modal-BDCuzSXE.min.js",
       "_delete-factory-ehB9kID_.min.js",
       "_preview-B3PUvf1N.min.js",
       "_header-avatar-C_NsaBTf.min.js",

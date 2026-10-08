@@ -17,7 +17,8 @@ declare(strict_types=1);
         // light-mode flash on a dark-mode reload, and so Alpine's theme store
         // (app.js) reads the correct starting class instead of a stale one.
         (function () {
-            if (localStorage.getItem('user-theme') === 'dark') {
+            var t = localStorage.getItem('user-theme'); // light | dark | system (utils/theme.js)
+            if (t === 'dark' || (t === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
                 document.documentElement.classList.add('dark');
             }
         })();

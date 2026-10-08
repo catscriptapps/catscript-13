@@ -639,3 +639,15 @@ th[data-sort].sort-desc::after {
 .saver-breathe {
     animation: saverBreathe 8s ease-in-out infinite;
 }
+
+/* Settings (pages/settings.php): each section fades in when its tab opens */
+.settings-panel:not([hidden]) {
+    animation: settingsPanelIn 0.25s ease-out;
+}
+@keyframes settingsPanelIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .settings-panel:not([hidden]) { animation: none; }
+}

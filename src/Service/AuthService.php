@@ -152,18 +152,47 @@ class AuthService
     public static function endSessionsFor(int $userId): int
     {
         $ended = 0;
-        $mine = session_status() === PHP_SESSION_ACTIVE ? session_id() : '';
-        foreach (glob(self::SESSION_DIR . '/sess_*') ?: [] as $file) {
-            if (basename($file) === "sess_{$mine}") {
-                continue;
-            }
-            $raw = @file_get_contents($file);
-            // PHP's session format: "user_id|i:5;…" (at the start, or after a ";")
-            if ($raw !== false && preg_match('/(^|;)user_id\|i:' . $userId . ';/', $raw) && @unlink($file)) {
+        foreach (self::otherSessionFiles($userId) as $file) {
+            if (@unlink($file)) {
                 $ended++;
             }
         }
         return $ended;
+    }
+
+    /**
+     * How many other browsers / devices are still signed in as this user
+     * (Settings → Security), not counting the caller's own session.
+     */
+    public static function otherSessionCount(int $userId): int
+    {
+        return count(self::otherSessionFiles($userId, true));
+    }
+
+    /**
+     * The user's session files, never the caller's own. With $liveOnly,
+     * only ones used within SESSION_LIFETIME — expired files can linger
+     * until PHP's garbage collection gets to them.
+     * @return string[]
+     */
+    private static function otherSessionFiles(int $userId, bool $liveOnly = false): array
+    {
+        $mine = session_status() === PHP_SESSION_ACTIVE ? session_id() : '';
+        $files = [];
+        foreach (glob(self::SESSION_DIR . '/sess_*') ?: [] as $file) {
+            if (basename($file) === "sess_{$mine}") {
+                continue;
+            }
+            if ($liveOnly && (int) @filemtime($file) < time() - self::SESSION_LIFETIME) {
+                continue;
+            }
+            $raw = @file_get_contents($file);
+            // PHP's session format: "user_id|i:5;…" (at the start, or after a ";")
+            if ($raw !== false && preg_match('/(^|;)user_id\|i:' . $userId . ';/', $raw)) {
+                $files[] = $file;
+            }
+        }
+        return $files;
     }
 
     /** @return array{lifetime: int, path: string, domain: string, secure: bool, httponly: bool, samesite: string} */

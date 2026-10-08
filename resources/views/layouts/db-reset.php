@@ -28,7 +28,8 @@ $isLoggedIn = false; // We force this for the reset screen
         // dark-mode.js's STORAGE_KEY ('user-theme'), which this layout's
         // #dark-toggle button already writes to correctly.
         (function () {
-            if (localStorage.getItem('user-theme') === 'dark') {
+            var t = localStorage.getItem('user-theme'); // light | dark | system (utils/theme.js)
+            if (t === 'dark' || (t === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
                 document.documentElement.classList.add('dark');
             }
         })();
