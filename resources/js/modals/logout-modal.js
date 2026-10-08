@@ -9,6 +9,12 @@
 import { Modal } from '../factories/modal-factory.js';
 import { buttonSpinner } from '../utils/spinner-utils.js';
 
+// Same as LoginModal: app.js re-creates this after every SPA navigation, so
+// the document listeners are attached once and act on the newest instance
+// (per-instance listeners stacked, sending one logout request per page visited).
+let current = null;
+let listenersBound = false;
+
 export class LogoutModal {
     constructor(buttonSelector = 'a[data-logout-button]') {
         this.selector = buttonSelector;
@@ -21,7 +27,11 @@ export class LogoutModal {
             showFooter: false,
         });
 
-        this.initEventListeners();
+        current = this;
+        if (!listenersBound) {
+            listenersBound = true;
+            this.initEventListeners();
+        }
     }
 
     /**
@@ -54,18 +64,18 @@ export class LogoutModal {
     initEventListeners() {
         // 1. Listen for OPEN trigger
         document.addEventListener('click', (e) => {
-            const btn = e.target.closest(this.selector);
+            const btn = e.target.closest(current.selector);
             if (!btn) return;
 
             e.preventDefault();
-            this.modal.open();
+            current.modal.open();
         });
 
         // 2. Listen for modal button clicks (Delegated to document)
         document.addEventListener('click', async (e) => {
             // Handle CANCEL
             if (e.target.id === 'cancel-logout-btn') {
-                this.modal.close();
+                current.modal.close();
                 return;
             }
 
@@ -98,7 +108,7 @@ export class LogoutModal {
                         document.getElementById('cancel-logout-btn').style.display = 'none';
 
                         setTimeout(() => {
-                            this.modal.close();
+                            current.modal.close();
                             window.location.href = window.APP_CONFIG.baseUrl;
                         }, 800);
                     } else {

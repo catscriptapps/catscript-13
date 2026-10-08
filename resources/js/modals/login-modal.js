@@ -6,6 +6,14 @@ import { loginFormHTML } from '../forms/login-form.js';
 import { buttonSpinner } from '../utils/spinner-utils.js';
 import { initForgotPassword } from '../utils/login/forgot-password.js';
 
+// app.js builds a new LoginModal after every SPA navigation (initGlobalModals),
+// but the listeners below live on document — attach them once per page load
+// and point them at the newest instance. Attaching them per instance stacked
+// one more handler each navigation, so e.g. the password eye toggled twice
+// (= no change) after the first page change.
+let current = null;
+let listenersBound = false;
+
 export class LoginModal {
     constructor(signInButtonSelector) {
         this.selector = signInButtonSelector;
@@ -19,18 +27,22 @@ export class LoginModal {
             showFooter: false,
         });
 
-        this.initEventListeners();
+        current = this;
+        if (!listenersBound) {
+            listenersBound = true;
+            this.initEventListeners();
+        }
         initForgotPassword();
     }
 
     initEventListeners() {
         // 1. Listen for clicks to OPEN the modal (Delegated)
         document.body.addEventListener('click', (event) => {
-            const button = event.target.closest(this.selector);
+            const button = event.target.closest(current.selector);
             if (!button) return;
 
             event.preventDefault();
-            this.modal.open();
+            current.modal.open();
 
             // FOCUS: Focus the first field on initial open
             setTimeout(() => {
@@ -112,7 +124,7 @@ export class LoginModal {
                     }
 
                     setTimeout(() => {
-                        this.modal.close();
+                        current.modal.close();
 
                         // Stay put — reload the page the modal was opened from rather
                         // than jumping to /dashboard, so e.g. signing in from the
