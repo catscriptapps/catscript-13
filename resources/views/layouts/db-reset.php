@@ -107,10 +107,17 @@ $isLoggedIn = false; // We force this for the reset screen
                         </svg>
                     </div>
 
-                    <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-4">Reset Mode Active</h2>
-                    <p class="text-gray-600 dark:text-gray-400 mb-8">
-                        The system is currently locked for maintenance. Click the <strong>trash icon in the header</strong> to install or update the database.
-                    </p>
+                    <?php if (!empty($needsInstall)): ?>
+                        <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-4">Not Installed Yet</h2>
+                        <p class="text-gray-600 dark:text-gray-400 mb-8">
+                            The database is empty (or can't be reached — check the <strong>DB_*</strong> settings in .env). Set <strong>ADMIN_EMAIL</strong> and <strong>ADMIN_RESET_PASSWORD</strong> in .env, then click the <strong>trash icon in the header</strong> and enter that password to install.
+                        </p>
+                    <?php else: ?>
+                        <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-4">Reset Mode Active</h2>
+                        <p class="text-gray-600 dark:text-gray-400 mb-8">
+                            The system is currently locked for maintenance. Click the <strong>trash icon in the header</strong> to install or update the database.
+                        </p>
+                    <?php endif; ?>
 
                     <p class="text-amber-700 dark:text-amber-400 font-bold mb-8">
                         An empty database gets the full install (tables, starter data and the first admin from .env); existing data is never touched — only missing tables and columns are added.<br> Back up the database first.

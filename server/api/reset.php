@@ -28,7 +28,9 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') {
     json_response(['success' => false, 'messages' => ['Method not allowed.']], 405);
 }
 
-$isAdminReset = filter_var($_ENV['ADMIN_RESET'] ?? false, FILTER_VALIDATE_BOOLEAN);
+// A not-yet-installed database counts as maintenance mode (nobody can be
+// signed in without a users table), so the first install uses the .env secret.
+$isAdminReset = filter_var($_ENV['ADMIN_RESET'] ?? false, FILTER_VALIDATE_BOOLEAN) || !isDatabaseInstalled();
 $input = json_decode(file_get_contents('php://input'), true) ?: [];
 $password = (string) ($input['password'] ?? '');
 

@@ -34,6 +34,11 @@ $path = normalizePath($uri, $basePath);
 // Auth check
 $isAdminReset = filter_var($_ENV['ADMIN_RESET'] ?? false, FILTER_VALIDATE_BOOLEAN); // Convert the string "true" from .env into a real boolean true
 
+// Not installed yet (empty database): behave like maintenance mode so the
+// first visit lands on the install screen instead of a database error.
+$needsInstall = !isDatabaseInstalled();
+$isAdminReset = $isAdminReset || $needsInstall;
+
 if ($isAdminReset === true) {
     $isLoggedIn = false;
     $currentUser = null;

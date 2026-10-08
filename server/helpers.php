@@ -141,6 +141,26 @@ function getUserRoles($owner)
 }
 
 /**
+ * Has the DB reset built the core schema yet? False on a brand-new, empty
+ * database (or one that can't be reached) — index.php then shows the DB
+ * reset screen instead of pages that would fail, and api/reset accepts the
+ * ADMIN_RESET_PASSWORD so the first install can run without flipping
+ * ADMIN_RESET first.
+ */
+function isDatabaseInstalled(): bool
+{
+    static $installed = null;
+    if ($installed === null) {
+        try {
+            $installed = \Illuminate\Database\Capsule\Manager::schema()->hasTable('users');
+        } catch (\Throwable $e) {
+            $installed = false;
+        }
+    }
+    return $installed;
+}
+
+/**
  * Normalize the incoming URI by removing the base path (if present).
  */
 function normalizePath(string $uri, string $basePath): string
