@@ -12,7 +12,7 @@ use Illuminate\Database\Capsule\Manager as Capsule;
 use Src\Service\AuthService;
 
 /**
- * FAQs — the help centre, on the legacy `faqs` table.
+ * FAQs — the help centre, on the `faqs` table.
  *
  * Every question belongs to a topic (CATEGORIES: one per app, plus getting
  * started, account, admin…), grouped into the same sections as the sidebar.
@@ -35,22 +35,10 @@ class FaqsController
 
     /** key => [label, section, emoji, one-line blurb] — in display order. */
     public const CATEGORIES = [
-        'getting-started' => ['Getting started', 'Start here', '🚀', 'What CatScript Apps is, finding your way around, and the basics.'],
+        'getting-started' => ['Getting started', 'Start here', '🚀', 'What this is, finding your way around, and the basics.'],
         'account'         => ['Account & sign-in', 'Start here', '🔐', 'Signing in, passwords, your profile and photo.'],
-        'privacy'         => ['Privacy & access', 'Start here', '🛡️', 'Who can see what, app access and the special permissions.'],
-        'tasks'           => ['Tasks', 'Workspace', '✅', 'The shared to-do and reminder list.'],
-        'cash-flow'       => ['Cash Flow', 'Workspace', '💰', 'Your private money in / money out ledger.'],
-        'meals'           => ['Meals', 'Workspace', '🍽️', 'Weekly meal plans with calories and PDFs.'],
-        'timetable'       => ['Timetable', 'Workspace', '🗓️', 'The family’s weekly routine, hour by hour.'],
-        'chores'          => ['Chores', 'Workspace', '✨', 'Who does which chore, and ticking them off.'],
-        'medicals'        => ['Medicals', 'Workspace', '🩺', 'Appointments, medications, vaccinations and health records.'],
-        'pictures'        => ['Pictures', 'Workspace', '🖼️', 'Your private photo gallery.'],
-        'customers'       => ['Customers', 'Business', '🤝', 'The business customer directory.'],
-        'invoices'        => ['Invoices', 'Business', '🧾', 'Itemised invoices, PDFs and what’s owing.'],
-        'receipts'        => ['Receipts', 'Business', '💵', 'Recording payments against invoices.'],
-        'social-feed'     => ['Social Feed', 'Community', '💬', 'Posts, photos, videos, likes and follows.'],
+        'privacy'         => ['Privacy & access', 'Start here', '🛡️', 'Who can see what, and app access.'],
         'live-chat'       => ['Live chat', 'Community', '🗨️', 'The chat bubble on every page.'],
-        'guest-demos'     => ['Trying as a guest', 'Help', '🎮', 'The try-it demos — no account needed.'],
         'contact'         => ['Contact & support', 'Help', '✉️', 'Getting in touch and reporting problems.'],
         'admin'           => ['Admin tools', 'Admin', '👑', 'Users, app access, Messages, the chat inbox and updates.'],
     ];
@@ -171,7 +159,6 @@ class FaqsController
 
             Capsule::connection()->transaction(function () use ($faq, $isNew, $question, $answer, $category, $active, $userId, $hasCategory, $movedTopic) {
                 if ($isNew) {
-                    $faq->id = (int) Capsule::table('faqs')->lockForUpdate()->max('id') + 1;
                     $faq->orig_user_id = $userId;
                 }
                 $faq->question = $question;

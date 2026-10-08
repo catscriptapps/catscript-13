@@ -7,12 +7,13 @@ use Src\Service\AuthService;
 
 header('Content-Type: application/json');
 
-// "DB Reset" — applies the pending, additive database updates in
-// scripts/migrations/ (the same set `php scripts/migrate.php` runs) to the
-// shared legacy catscript_db. It never drops, truncates, or reseeds tables
-// and never touches uploaded files: each migration only creates a missing
-// table/column and skips anything that already exists, so running it on
-// production leaves existing data alone. Back up the database first anyway.
+// "DB Reset" — applies the database migrations in scripts/migrations/ (the
+// same set `php scripts/migrate.php` runs). On an empty database that's a
+// full install: the core tables, reference data, FAQs and the first admin
+// (ADMIN_EMAIL / ADMIN_PASSWORD in .env). On a live one it only adds what's
+// missing — it never drops, truncates, or reseeds tables and never touches
+// uploaded files, so running it on production leaves existing data alone.
+// Back up the database first anyway.
 //
 // Two ways in:
 //
@@ -20,8 +21,8 @@ header('Content-Type: application/json');
 //    site into layouts/db-reset.php with nobody signed in, so the password
 //    is checked against the ADMIN_RESET_PASSWORD secret from .env instead —
 //    and only if one is actually configured (never the bootstrap fallback).
-// 2. Normal mode: signed in as Cat (user #1 — the only account that sees
-//    the header trash icon), re-entering that account's own password.
+// 2. Normal mode: signed in as user #1 (the first admin — the only account
+//    that sees the header trash icon), re-entering that account's own password.
 
 if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') {
     json_response(['success' => false, 'messages' => ['Method not allowed.']], 405);

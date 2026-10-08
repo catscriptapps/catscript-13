@@ -16,8 +16,7 @@ declare(strict_types=1);
  * rebuilt CatScript app only needs registering there to show up here.
  *
  * Badges: #messages-badge is filled by ui/unread-handler.js (polls
- * api/global-unread); #tasks-nav-badge (due today) is rendered here and
- * refreshed by pages/tasks-page.js after each change.
+ * api/global-unread).
  */
 
 use Src\Config\NavigationConfig;
@@ -38,23 +37,10 @@ $navIcons = NavigationConfig::getIcons();
 $currentFullPath = ($_ENV['APP_BASE_PATH'] ?? '') . ($path ?? '');
 
 // Grouped the same way as the dashboard (NavigationConfig::sections()):
-// Workspace / Business / Community / Account (members) or Help (guests).
+// Workspace / Community / Account (members) or Help (guests).
 // A section also lists apps still being built (NavigationConfig::UPCOMING) as "Soon".
 $sections = NavigationConfig::sections($signedIn);
 $upcoming = $signedIn ? NavigationConfig::upcoming() : [];
-
-// Apps a guest can try in the browser (AppsCatalog demo => true)
-$guestDemos = $signedIn ? [] : array_column(array_filter(\Src\Config\AppsCatalog::apps(), fn($a) => !empty($a['demo'])), 'name');
-
-// Tasks due today (badge)
-$tasksDueToday = 0;
-if ($signedIn && isset($navLinks['Tasks'])) {
-    try {
-        $tasksDueToday = \App\Models\Task::whereDate('due_date', date('Y-m-d'))->count();
-    } catch (\Throwable $e) {
-        $tasksDueToday = 0;
-    }
-}
 
 // Personal card
 $me = $signedIn ? AuthService::currentUser() : null;
@@ -83,11 +69,11 @@ $profileUrl = ($_ENV['APP_BASE_PATH'] ?? '') . '/profile';
 
     <!-- Brand -->
     <div class="relative flex items-center justify-center px-5 h-20 flex-shrink-0">
-        <a href="<?= $baseUrl ?>" data-partial class="flex items-center justify-center" aria-label="CatScript Apps home">
-            <img x-show="$store.sidebar.expanded || mobileMenuOpen" src="<?= $assetBase ?>images/logo/logo-dark.jpg" alt="CatScript Apps" class="h-11 w-auto drop-shadow-[0_4px_12px_rgba(0,0,0,0.35)]" />
+        <a href="<?= $baseUrl ?>" data-partial class="flex items-center justify-center" aria-label="<?= htmlspecialchars($appName) ?> home">
+            <img x-show="$store.sidebar.expanded || mobileMenuOpen" src="<?= $assetBase ?>images/logo/logo-dark.jpg" alt="<?= htmlspecialchars($appName) ?>" class="h-11 w-auto drop-shadow-[0_4px_12px_rgba(0,0,0,0.35)]" />
             <span x-show="!$store.sidebar.expanded && !mobileMenuOpen" x-cloak
                 class="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/10 ring-1 ring-white/15 shadow-lg shadow-primary-500/20">
-                <img src="<?= $assetBase ?>images/logo/favicon.ico" alt="CatScript Apps" class="h-8 w-8 object-contain" />
+                <img src="<?= $assetBase ?>images/logo/favicon.ico" alt="<?= htmlspecialchars($appName) ?>" class="h-8 w-8 object-contain" />
             </span>
         </a>
 
@@ -108,12 +94,7 @@ $profileUrl = ($_ENV['APP_BASE_PATH'] ?? '') . '/profile';
                     <?php foreach ($links as $name => $link): ?>
                         <?php
                         $isActive = $currentFullPath === $link['url'];
-                        $badge = in_array($name, $guestDemos, true)
-                            ? '<span class="sidebar-try-tag" title="Try it in your browser — no account needed">Try</span>'
-                            : match ($name) {
-                            'Tasks' => $tasksDueToday > 0
-                                ? '<span id="tasks-nav-badge" class="sidebar-badge">' . $tasksDueToday . '</span>'
-                                : '<span id="tasks-nav-badge" class="sidebar-badge hidden"></span>',
+                        $badge = match ($name) {
                             'Messages' => '<span id="messages-badge" class="sidebar-badge hidden"></span>',
                             default => '',
                         };
@@ -168,7 +149,7 @@ $profileUrl = ($_ENV['APP_BASE_PATH'] ?? '') . '/profile';
             </a>
         <?php else: ?>
             <div x-show="$store.sidebar.expanded || mobileMenuOpen" class="rounded-2xl p-4 bg-gradient-to-br from-primary-500/25 to-primary-600/5 ring-1 ring-primary-400/25">
-                <p class="text-sm font-bold">Welcome to CatScript</p>
+                <p class="text-sm font-bold">Welcome to <?= htmlspecialchars($appName) ?></p>
                 <p class="text-xs text-white/60 mt-0.5 mb-3">Your everyday app suite, one sign-in away.</p>
                 <a href="<?= $baseUrl ?>login" data-login-button
                     class="flex items-center justify-center gap-2 w-full rounded-xl bg-primary-500 hover:bg-primary-400 py-2 text-sm font-semibold shadow-lg shadow-primary-500/30 transition-colors">

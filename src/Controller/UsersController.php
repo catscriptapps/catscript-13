@@ -6,7 +6,6 @@ declare(strict_types=1);
 namespace Src\Controller;
 
 use App\Models\User;
-use App\Models\Follow;
 use App\Utils\IdEncoder;
 use Src\Service\AuthService;
 use App\Traits\RecentActivityLogger;
@@ -16,12 +15,11 @@ class UsersController
     use RecentActivityLogger;
 
     /**
-     * Core accounts that must always survive a delete request — id 1 (Cat)
-     * and id 2 (Elas), the two seeded legacy accounts every reset script
-     * recreates. Enforced here (not just in the UI) since this is the
+     * Core accounts that must always survive a delete request — id 1, the
+     * first admin the DB reset creates. Enforced here (not just in the UI) since this is the
      * actual authority the API checks.
      */
-    private const PROTECTED_USER_IDS = [1, 2];
+    public const PROTECTED_USER_IDS = [1];
 
     /**
      * Handle Delete
@@ -415,10 +413,9 @@ class UsersController
                 $user->user_type_ids = [2];
             }
 
-            // App access (legacy users.permitted_apps — also read by the
-            // production legacy app). Admin-only, and only the apps this app
-            // grants are touched: every other entry (Dashboard, Chores, ...)
-            // is preserved exactly as the legacy app left it.
+            // App access (users.permitted_apps). Admin-only, and only the apps
+            // this app grants are touched: any other entry (e.g. an app you've
+            // since retired) is preserved as it was.
             if (!empty($data['permitted_apps_present']) && AuthService::isAdmin()) {
                 $grantable = \Src\Config\NavigationConfig::grantableApps();
                 $submitted = array_intersect(array_map('strval', (array) ($data['permitted_apps'] ?? [])), $grantable);
@@ -426,10 +423,8 @@ class UsersController
                 $user->permitted_apps = array_values(array_unique(array_merge($kept, $submitted)));
             }
 
-            // Core Account Admin Guard: user #1 (Cat, the legacy app's built-in
-            // admin) always keeps Admin (1). Only #1 — a template leftover also
-            // forced #2, which silently made Ella an admin (= every app) on
-            // any save and overrode her App Access.
+            // Core Account Admin Guard: user #1 (the first admin) always keeps
+            // Admin (1).
             if (!$isNew && (int) $user->id === 1) {
                 $currentRoles = $user->user_type_ids; // Pull array out of the overloaded property
                 if (!in_array(1, $currentRoles)) {

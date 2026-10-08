@@ -95,7 +95,7 @@ declare(strict_types=1);
             </a>
         <?php endif; ?>
 
-        <!-- DB Reset Trigger (Cat only) -->
+        <!-- DB Reset Trigger (user #1 only) -->
         <?php if ($isLoggedIn && \Src\Service\AuthService::isCat()): ?>
             <button data-reset-button data-tooltip="DB Reset" title="DB Reset (apply database updates)"
                 class="p-2 rounded-xl text-gray-500 dark:text-gray-400 hover:bg-red-50 dark:hover:bg-red-950/40 hover:text-red-600 dark:hover:text-red-400 transition-all focus:outline-none">

@@ -22,7 +22,7 @@ use Src\Config\NavigationConfig;
 // Config & Environment
 // ------------------------------------------------------------
 $basePath = trim($_ENV['APP_BASE_PATH'] ?? '', '/');
-$appName = $_ENV['APP_NAME'] ?? 'CatScript Apps';
+$appName = $_ENV['APP_NAME'] ?? 'CatScript-13';
 $isPartial = ($_SERVER['HTTP_X_REQUESTED_WITH'] ?? '') === 'XMLHttpRequest';
 
 // ------------------------------------------------------------
@@ -65,6 +65,17 @@ $assetBase = rtrim($assetBase, '/') . '/';
 // etc.) renders inside the same chrome as a normal page.
 // ------------------------------------------------------------
 $resolvedLayout = __DIR__ . '/../resources/views/layouts/app.php';
+
+// ------------------------------------------------------------
+// Maintenance mode (ADMIN_RESET=true): every page is the DB reset screen —
+// nobody is signed in and nothing below touches the database, so this also
+// works on a brand-new, empty database (the first install).
+// ------------------------------------------------------------
+if ($isAdminReset) {
+    $title = 'Database Reset';
+    include __DIR__ . '/../resources/views/layouts/db-reset.php';
+    exit;
+}
 
 // ------------------------------------------------------------
 // Protected route handling (The Security Guard)
@@ -125,10 +136,5 @@ if ($isPartial) {
 }
 
 // Final Step: Full layout rendering — $resolvedLayout was already computed
-// up front (see "Layout resolution" above); db-reset mode overrides it,
-// since that's an orthogonal maintenance mode rather than a page.
-if ($isAdminReset) {
-    include __DIR__ . '/../resources/views/layouts/db-reset.php';
-} else {
-    include $resolvedLayout;
-}
+// up front (see "Layout resolution" above).
+include $resolvedLayout;

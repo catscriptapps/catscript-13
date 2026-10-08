@@ -16,7 +16,7 @@ require_once __DIR__ . '/migrations/runner.php';
 $result = runMigrations();
 
 foreach ($result['messages'] as $line) {
-    echo $line . PHP_EOL;
+    echo strip_tags($line) . PHP_EOL; // log lines may carry <strong> for the web modal
 }
 
 exit($result['success'] ? 0 : 1);

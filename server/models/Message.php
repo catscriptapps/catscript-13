@@ -8,17 +8,15 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * A contact-form message or an admin's reply — the legacy catscript_db
- * `messages` table (shared with the legacy app). Rows sharing a
- * conversation_id form one thread; older rows without one are a thread of
- * their own. is_sent = 1 marks an admin reply (emailed to the visitor);
- * is_read only matters for incoming rows. `id` doesn't auto-increment in the
- * legacy schema, so MessagesController assigns it (MAX + 1 under a lock).
+ * A contact-form message or an admin's reply — the `messages` table. Rows
+ * sharing a conversation_id form one thread; a row without one is a thread
+ * of its own. is_sent = 1 marks an admin reply (emailed to the visitor);
+ * is_read only matters for incoming rows.
  */
 class Message extends Model
 {
     protected $table = 'messages';
-    public $incrementing = false;
+    public $incrementing = true;
     protected $keyType = 'int';
 
     protected $fillable = [

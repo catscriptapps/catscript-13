@@ -22,7 +22,8 @@ import { TONE, formSection, kitInput, kitLabel, kitSubmit, kitGhost } from '../f
 const base = () => window.APP_CONFIG?.baseUrl || '/';
 const api = () => `${base()}api/faqs`;
 const HERO_SLIDE_MS = 8 * 1000;
-const SECTIONS = ['Start here', 'Workspace', 'Business', 'Community', 'Help', 'Admin'];
+// Same section names as FaqsController::CATEGORIES (empty ones are skipped)
+const SECTIONS = ['Start here', 'Workspace', 'Community', 'Help', 'Admin'];
 
 let data = { faqs: [], categories: [], is_admin: false, contact_url: '' };
 let state = { topic: 'getting-started', q: '', open: new Set() };
@@ -115,7 +116,7 @@ function renderTiles() {
   if (!el) return;
   const published = data.faqs.filter((f) => f.active);
   const topics = data.categories.filter((c) => c.count > 0);
-  const apps = topics.filter((c) => ['Workspace', 'Business', 'Community'].includes(c.section));
+  const apps = topics.filter((c) => ['Workspace', 'Community'].includes(c.section));
   const tile = (value, label) => `
     <div class="rounded-2xl bg-white/10 backdrop-blur-md ring-1 ring-white/15 px-3 py-3 text-center min-w-0">
       <span class="block text-2xl font-bold leading-none">${value}</span>
@@ -368,7 +369,7 @@ function openEditor(f) {
               <input id="faq-q" name="question" maxlength="255" value="${escapeHtml(v.question)}" placeholder="e.g. How do I record a payment?" class="${kitInput}"></div>
             <div><label for="faq-cat" class="${kitLabel}">Topic</label>
               <select id="faq-cat" name="category" class="${kitInput}">
-                ${SECTIONS.map((s) => `<optgroup label="${s}">${data.categories.filter((c) => c.section === s).map((c) => `<option value="${c.key}" ${c.key === v.category ? 'selected' : ''}>${c.icon} ${escapeHtml(c.label)}</option>`).join('')}</optgroup>`).join('')}
+                ${SECTIONS.filter((s) => data.categories.some((c) => c.section === s)).map((s) => `<optgroup label="${s}">${data.categories.filter((c) => c.section === s).map((c) => `<option value="${c.key}" ${c.key === v.category ? 'selected' : ''}>${c.icon} ${escapeHtml(c.label)}</option>`).join('')}</optgroup>`).join('')}
               </select></div>
           </div>`)}
         ${formSection(TONE.sky, '✍️', 'The answer', 'Blank line = new paragraph · “- ” = bullet · “1. ” = numbered step · **bold** · [label](/page) = link.', `

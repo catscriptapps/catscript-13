@@ -1,8 +1,8 @@
 <?php
 // /resources/views/pages/about.php
 //
-// About CatScript Apps — the suite itself: what each app does, how they fit
-// together, and how far the rebuild has come. All app data comes from
+// About — the suite itself: what each app does, how they fit together, and
+// what's live versus coming next. All app data comes from
 // Src\Config\AppsCatalog (shared with the home page and dashboard), so this
 // page updates itself as apps go live.
 
@@ -20,16 +20,14 @@ $byName = array_column($apps, null, 'name');
 
 $live = array_values(array_filter($apps, fn($a) => $a['live']));
 $liveCount = count($live);
-// Guests can try these in the browser (AppsCatalog 'demo')
-$isDemo = fn(array $a): bool => !$isLoggedIn && !empty($a['demo']);
-$demoNames = array_map(fn($a) => $a['name'], array_values(array_filter($live, $isDemo)));
+$comingSoon = AppsCatalog::comingSoon();
 $total = count($apps);
 $progress = $total ? (int) round($liveCount / $total * 100) : 0;
 
 $pillars = [
     [
         'title' => 'One sign-in for everything',
-        'text' => 'A single CatScript account opens every app you have access to — no separate logins, no juggling.',
+        'text' => 'A single account opens every app you have access to — no separate logins, no juggling.',
         'icon' => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />',
     ],
     [
@@ -39,7 +37,7 @@ $pillars = [
     ],
     [
         'title' => 'Private where it matters',
-        'text' => 'Your cash flow is yours alone, and each person only sees the apps they’ve been given — the kids don’t see the bills.',
+        'text' => 'Each person only sees the apps they’ve been given, and admin tools stay with the admins.',
         'icon' => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />',
     ],
     [
@@ -81,9 +79,9 @@ $canEditHero = \Src\Service\AuthService::isAdmin();
 
         <div class="relative grid grid-cols-1 lg:grid-cols-5 gap-8 p-6 sm:p-10">
             <div class="lg:col-span-3">
-                <p class="text-xs font-semibold uppercase tracking-[0.2em] text-primary-300">About CatScript Apps</p>
-                <h1 class="mt-3 text-3xl sm:text-4xl font-bold tracking-tight leading-tight">A family of small, focused apps for home, money, and business.</h1>
-                <p class="mt-4 text-base text-secondary-100 max-w-xl">Each CatScript app does one job well — the family’s tasks, the household cash flow, the week’s meals, the business invoices — and they all share one account, one profile, and one place to find everything.</p>
+                <p class="text-xs font-semibold uppercase tracking-[0.2em] text-primary-300">About <?= htmlspecialchars($appName) ?></p>
+                <h1 class="mt-3 text-3xl sm:text-4xl font-bold tracking-tight leading-tight">A family of small, focused apps that work as one.</h1>
+                <p class="mt-4 text-base text-secondary-100 max-w-xl">Each app does one job well — and they all share one account, one profile, and one place to find everything.</p>
                 <?php if ($canEditHero): ?>
                     <!-- Admin: change / reset the hero photo (in flow, so it never overlaps) -->
                     <div class="mt-6 flex flex-wrap items-center gap-2">
@@ -136,8 +134,8 @@ $canEditHero = \Src\Service\AuthService::isAdmin();
                 </div>
 
                 <div class="mt-5 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-                    <?php foreach ($category['apps'] as $appName): ?>
-                        <?php $app = $byName[$appName];
+                    <?php foreach ($category['apps'] as $catApp): ?>
+                        <?php $app = $byName[$catApp];
                         $isLink = $app['live'] && !empty($app['slug']); ?>
                         <<?= $isLink ? 'a href="' . $baseUrl . $app['slug'] . '" data-partial' : 'div' ?>
                             class="group flex flex-col rounded-xl border p-4 transition-all <?= $app['live'] ? 'border-gray-200 dark:border-gray-800 hover:border-primary-300 dark:hover:border-primary-800 hover:shadow-md' : 'border-dashed border-gray-300 dark:border-gray-700' ?>">
@@ -166,7 +164,7 @@ $canEditHero = \Src\Service\AuthService::isAdmin();
                             </ul>
                             <?php if ($isLink): ?>
                                 <span class="mt-4 inline-flex items-center gap-1 text-xs font-semibold text-primary-600 dark:text-primary-400">
-                                    <?= $isDemo($app) ? 'Try it in your browser — no account needed' : 'Open ' . htmlspecialchars($app['name']) ?>
+                                    Open <?= htmlspecialchars($app['name']) ?>
                                     <svg class="h-3.5 w-3.5 group-hover:translate-x-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
                                 </span>
                             <?php endif; ?>
@@ -198,8 +196,8 @@ $canEditHero = \Src\Service\AuthService::isAdmin();
     <section class="rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 shadow-sm p-5 sm:p-6">
         <div class="flex flex-wrap items-end justify-between gap-3">
             <div>
-                <h2 class="text-xl font-bold text-gray-900 dark:text-white">The rebuild, app by app</h2>
-                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">The original CatScript apps are being rebuilt one at a time — each goes live here the moment it’s ready.</p>
+                <h2 class="text-xl font-bold text-gray-900 dark:text-white">Growing, app by app</h2>
+                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">New apps join the suite one at a time — each goes live here the moment it’s ready.</p>
             </div>
             <p class="text-sm font-semibold text-gray-900 dark:text-white"><?= $liveCount ?> of <?= $total ?> live</p>
         </div>
@@ -213,7 +211,6 @@ $canEditHero = \Src\Service\AuthService::isAdmin();
                     <?php foreach ($live as $a): ?>
                         <a href="<?= $baseUrl . $a['slug'] ?>" data-partial class="inline-flex items-center gap-1.5 text-sm font-semibold px-3 py-1.5 rounded-lg bg-emerald-50 text-emerald-700 hover:bg-emerald-100 dark:bg-emerald-950/40 dark:text-emerald-300 transition-colors">
                             <span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span><?= htmlspecialchars($a['name']) ?>
-                            <?php if ($isDemo($a)): ?><span class="rounded bg-primary-100 dark:bg-primary-950/60 px-1 text-[10px] font-bold uppercase tracking-wider text-primary-700 dark:text-primary-300">Try</span><?php endif; ?>
                         </a>
                     <?php endforeach; ?>
                 </div>
@@ -221,7 +218,10 @@ $canEditHero = \Src\Service\AuthService::isAdmin();
             <div>
                 <p class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-2">Coming next</p>
                 <div class="flex flex-wrap gap-2">
-                    <?php foreach (AppsCatalog::comingSoon() as $name): ?>
+                    <?php if (!$comingSoon): ?>
+                        <span class="text-sm font-medium px-3 py-1.5 rounded-lg bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400">More on the way</span>
+                    <?php endif; ?>
+                    <?php foreach ($comingSoon as $name): ?>
                         <span class="text-sm font-medium px-3 py-1.5 rounded-lg bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400"><?= htmlspecialchars($name) ?></span>
                     <?php endforeach; ?>
                 </div>
@@ -237,8 +237,7 @@ $canEditHero = \Src\Service\AuthService::isAdmin();
             <p class="mt-3 text-sm text-secondary-200">
                 <?= $isLoggedIn
                     ? 'Jump back into your apps from the dashboard.'
-                    : 'Accounts are created by the family administrator. Sign in to get started, or get in touch to ask for access.'
-                        . ($demoNames ? ' In the meantime, try ' . (count($demoNames) > 3 ? 'any of the apps' : human_list(array_map('htmlspecialchars', $demoNames))) . ' right in your browser — no account needed.' : '') ?>
+                    : 'Accounts are created by an administrator. Sign in to get started, or get in touch to ask for access.' ?>
             </p>
             <div class="mt-6 flex flex-col sm:flex-row items-center justify-center gap-3">
                 <?php if ($isLoggedIn): ?>

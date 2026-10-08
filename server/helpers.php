@@ -256,8 +256,8 @@ function resolvePageRoute(string $path): array
  */
 function resolveDynamicPageMeta(string $resource, string $id): ?array
 {
-    // No detail-route resources yet — add per-resource lookups here as the
-    // CatScript apps are rebuilt (e.g. /invoices/{id}).
+    // No detail-route resources yet — add per-resource lookups here as you
+    // build apps with detail pages (e.g. /reports/{id}).
     return null;
 }
 
@@ -298,15 +298,6 @@ function rrmdir(string $dir): bool
         }
     }
     return rmdir($dir);
-}
-
-/**
- * Convert an absolute file path to a format suitable for mPDF image source.
- */
-function pdfImageSrc(string $absolute): ?string
-{
-    if (!file_exists($absolute)) return null;
-    return str_replace('\\', '/', $absolute);
 }
 
 /**

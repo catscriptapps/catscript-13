@@ -35,10 +35,10 @@ $data = FaqsController::state() + ['contact_url' => $baseUrl . 'contact'];
                 <div class="min-w-0 flex-1">
                     <span class="inline-flex items-center gap-2 rounded-full bg-white/10 ring-1 ring-white/15 px-3 py-1 text-xs font-semibold">Help · FAQs</span>
                     <h1 class="mt-3 text-3xl sm:text-4xl font-bold tracking-tight drop-shadow-[0_2px_12px_rgba(0,0,0,0.35)]">How can we help?</h1>
-                    <p class="mt-2 text-base text-secondary-50 max-w-xl">Answers about every CatScript app — how things work, who can see what, and how to get the most out of each one.</p>
+                    <p class="mt-2 text-base text-secondary-50 max-w-xl">Answers about every app — how things work, who can see what, and how to get the most out of each one.</p>
                     <div class="relative mt-5 max-w-2xl">
                         <svg class="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
-                        <input type="search" id="faq-search" autocomplete="off" placeholder="Search every answer — e.g. “invoice PDF”, “share out chores”, “password”…"
+                        <input type="search" id="faq-search" autocomplete="off" placeholder="Search every answer — e.g. “password”, “live chat”, “photo”…"
                             class="block w-full rounded-2xl border-0 bg-white/95 dark:bg-gray-900/95 py-3.5 pl-12 pr-4 text-sm sm:text-base text-gray-900 dark:text-white placeholder-gray-400 shadow-lg focus:ring-4 focus:ring-primary-400/40 outline-none">
                     </div>
                 </div>

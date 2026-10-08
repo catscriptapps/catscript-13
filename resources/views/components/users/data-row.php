@@ -20,11 +20,11 @@ $avatarUrl = $hasAvatar ? htmlspecialchars($AVATAR_DIR_PREFIX . $rowItem['avatar
 $fullName = $rowItem['full_name'] ?? trim(($rowItem['first_name'] ?? '') . ' ' . ($rowItem['last_name'] ?? ''));
 if (empty($fullName)) $fullName = 'Unknown User';
 
-// Core accounts (#1 Cat, #2 Ella) can't be deleted — the real enforcement is
-// UsersController::PROTECTED_USER_IDS. Only #1 is locked as Admin (the edit
-// modal disables its Admin checkbox; UsersController re-adds Admin on save),
-// so everyone else — Ella included — gets exactly the apps assigned to them.
-$isProtectedAccount = in_array((int) ($rowItem['id'] ?? 0), [1, 2], true);
+// The core account (#1, the first admin) can't be deleted — the real
+// enforcement is UsersController::PROTECTED_USER_IDS — and is locked as Admin
+// (the edit modal disables its Admin checkbox; UsersController re-adds Admin
+// on save). Everyone else gets exactly the apps assigned to them.
+$isProtectedAccount = in_array((int) ($rowItem['id'] ?? 0), \Src\Controller\UsersController::PROTECTED_USER_IDS, true);
 $isAdminLocked = (int) ($rowItem['id'] ?? 0) === 1;
 
 // Prepare data attributes - user-type-ids is passed as a JSON string

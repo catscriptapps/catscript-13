@@ -5,14 +5,18 @@
 // the header "DB Reset" button (server/api/reset.php), so both always apply
 // exactly the same changes.
 //
-// This app shares its database (catscript_db) with the legacy app in
-// production, so every migration must be ADDITIVE and IDEMPOTENT: create a
-// table or column only if it's missing, never drop, rename, truncate, or
-// rewrite legacy data. Running the full set again is always safe — each
-// step checks first and reports "already exists — skipped".
+// On an empty database the first run builds the whole core schema and seeds
+// it (roles, countries / regions, FAQs and the first admin from .env); on a
+// live one it only adds what's missing. So every migration must be ADDITIVE
+// and IDEMPOTENT: create a table or column only if it's missing, seed only
+// into empty tables (or rows matched by a natural key), never drop, rename,
+// truncate, or rewrite existing data. Running the full set again is always
+// safe — each step checks first and reports "already exists — skipped".
 //
 // Migration files are named YYYY_MM_DD_NNNNNN_description.php and each
-// returns a callable that returns an array of log lines.
+// returns a callable that returns an array of log lines. To add a table for
+// a new app, add a file with a later date (copy the pattern in
+// 2026_10_08_000001_create_core_tables.php).
 
 declare(strict_types=1);
 

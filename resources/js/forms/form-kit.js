@@ -1,7 +1,7 @@
 // /resources/js/forms/form-kit.js
 //
-// Shared building blocks for the colourful forms (Users, Customers,
-// Invoices): colour-coded section cards with an emoji badge, the gradient
+// Shared building blocks for the colourful forms (Users, and any you
+// build): colour-coded section cards with an emoji badge, the gradient
 // identity card at the top (a live preview of what's being made), and the
 // matching inputs and buttons. Class strings are written out in full so
 // Tailwind keeps them.

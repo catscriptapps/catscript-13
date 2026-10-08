@@ -119,7 +119,7 @@ $detailRow = function (string $label, string $value, string $field = '', bool $m
                             data-region-id="<?= $user->region_id ?? 0 ?>"
                             data-is-active="<?= $statusIsActive ? '1' : '0' ?>"
                             data-avatar-url="<?= htmlspecialchars($user->avatar_url ?? '') ?>"
-                            data-is-protected="<?= in_array((int) $user->id, [1, 2], true) ? '1' : '0' ?>"
+                            data-is-protected="<?= in_array((int) $user->id, \Src\Controller\UsersController::PROTECTED_USER_IDS, true) ? '1' : '0' ?>"
                             data-user-type-ids='<?= json_encode($user->user_type_ids ?? []) ?>'
                             data-permitted-apps='<?= htmlspecialchars(json_encode(array_values((array) ($user->permitted_apps ?? []))), ENT_QUOTES) ?>'
                             class="self-center sm:self-start md:self-auto flex-shrink-0 inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold bg-secondary-900 hover:bg-secondary-800 dark:bg-white/10 dark:hover:bg-white/20 text-white shadow-sm transition-colors">

@@ -193,36 +193,6 @@ input[type=number] {
     -moz-appearance: textfield;
 }
 
-/* Force the inputs to stay small */
-.item-qty {
-    width: 47px !important;
-}
-
-.item-rate {
-    width: 47px !important;
-}
-
-/* Ensure the WYSIWYG area shows list styles */
-.item-desc-editable ul {
-    list-style-type: disc !important;
-    margin-left: 1.25rem !important;
-    padding-left: 0.5rem !important;
-}
-
-.item-desc-editable ol {
-    list-style-type: decimal !important;
-    margin-left: 1.25rem !important;
-    padding-left: 0.5rem !important;
-}
-
-/* Fix for Indentation */
-.item-desc-editable blockquote {
-    border-left: 2px solid #e5e7eb;
-    padding-left: 1rem;
-    margin-left: 1rem;
-    color: #6b7280;
-}
-
 /* |--------------------------------------------------------------------------
 | Custom Scrollbars
 |--------------------------------------------------------------------------
@@ -403,36 +373,6 @@ header [data-tooltip]::after {
     border-color: transparent transparent transparent #111827;
 }
 
-/* Emoji Picker Custom Styles */
-.emoji-picker-popover {
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    animation: emoji-pop 0.2s ease-out;
-}
-
-@keyframes emoji-pop {
-    from {
-        opacity: 0;
-        transform: translateY(10px) scale(0.95);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-    }
-}
-
-/* Custom Scrollbar for the picker if you add more emojis later */
-.emoji-picker-popover::-webkit-scrollbar {
-    width: 4px;
-}
-
-.emoji-picker-popover::-webkit-scrollbar-thumb {
-    background: #ea580c;
-    /* primary-600 orange */
-    border-radius: 10px;
-}
-
 /* Float button for scrolling to latest comments */
 .scroll-latest-btn {
     position: absolute;
@@ -595,42 +535,6 @@ th[data-sort].sort-desc::after {
     .sidebar-scroll::-webkit-scrollbar-thumb {
         background-color: rgb(255 255 255 / 0.15) !important;
     }
-}
-
-/* |--------------------------------------------------------------------------
-| Cash Flow chart roles (pages/cash-flow.php, utils/cash-flow/charts.js)
-|--------------------------------------------------------------------------
-|
-| In / out form a diverging pair (blue <-> red), validated with the dataviz
-| palette checker against these exact card surfaces (white; gray-900 in dark):
-| light CVD dE 21.6 / normal 32.3, dark CVD dE 19.2 / normal 29.0, all >= 3:1.
-| Lives here, not in the page, because the SPA router strips <style> tags
-| from partial page loads.
-|
-*/
-/* Chart roles (palette validated for these card surfaces; see
-   resources/js/utils/cash-flow/charts.js). */
-.cf-root {
-    --cf-in: #2a78d6;
-    --cf-out: #e34948;
-    --cf-net: #475569;
-    --cf-surface: #ffffff;
-    --cf-grid: #eceae4;
-    --cf-axis: #c3c2b7;
-    --cf-ink: #0b0b0b;
-    --cf-ink-2: #52514e;
-    --cf-muted: #898781;
-}
-html.dark .cf-root {
-    --cf-in: #3987e5;
-    --cf-out: #e66767;
-    --cf-net: #cbd5e1;
-    --cf-surface: #111827;
-    --cf-grid: #1f2937;
-    --cf-axis: #374151;
-    --cf-ink: #ffffff;
-    --cf-ink-2: #c3c2b7;
-    --cf-muted: #898781;
 }
 
 /* |--------------------------------------------------------------------------

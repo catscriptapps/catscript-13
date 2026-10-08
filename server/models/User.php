@@ -9,10 +9,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * User Model — the legacy catscript_db `users` table (shared with the
- * production legacy app), plus the additive user_type_ids column (see
- * scripts/migrations/2026_09_26_000002_*). The legacy app still reads
- * permitted_apps; this app reads user_type_ids for roles.
+ * User Model — the `users` table (scripts/migrations/2026_10_08_000001_*).
+ * user_type_ids holds the roles (1 = Admin); permitted_apps the per-person
+ * app grants (AuthService::PERMISSIONED_APPS).
  */
 class User extends Model
 {
@@ -22,7 +21,6 @@ class User extends Model
     protected $keyType = 'int';
 
     protected $fillable = [
-        'customer_id',
         'full_name',
         'email',
         'phone',

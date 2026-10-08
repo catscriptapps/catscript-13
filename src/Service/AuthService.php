@@ -9,7 +9,7 @@ use App\Models\User;
 
 /**
  * Class AuthService
- * Centralized authentication service for the legacy catscript_db users table.
+ * Centralized authentication service (sessions, sign-in, roles, app access).
  */
 class AuthService
 {
@@ -27,49 +27,16 @@ class AuthService
     }
 
     /**
-     * Retrieves the currently logged-in landlord from the database.
-     * Uses the 'landlord_id' from the session.
+     * Apps that only some members may open: access follows each user's
+     * users.permitted_apps list, ticked in Users → App access (the list of
+     * boxes is NavigationConfig::grantableApps(), i.e. the names here that are
+     * also registered in NavigationConfig::authLinks()). Apps not listed here
+     * (Dashboard, Profile) are open to every signed-in user.
+     *
+     * When you build an app that should be granted per user, add its
+     * authLinks() name here, e.g. ['Reports'].
      */
-    public static function currentLandlord(): ?\App\Models\Landlord
-    {
-        // No Landlord account model in this app (removed in the PMB-template
-        // cleanup) — always null. Kept as a stub so existing callers'
-        // falsy checks keep working without touching every call site.
-        return null;
-    }
-
-    /**
-     * Retrieves the currently logged-in tenant from the database.
-     * Uses the 'tenant_id' from the session.
-     */
-    public static function currentTenant(): ?\App\Models\Tenant
-    {
-        // No Tenant account model in this app — see currentLandlord() above.
-        return null;
-    }
-
-    /**
-     * The rebuilt legacy CatScript apps. Access to these follows each user's
-     * legacy users.permitted_apps list (the same list the legacy app reads,
-     * so production permissions carry over unchanged) — e.g. Tasks is only
-     * open to the family members it was granted to.
-     */
-    public const PERMISSIONED_APPS = [
-        'Tasks', 'Chores', 'Cash Flow', 'Pictures', 'Meals',
-        'Timetable', 'Customers', 'Invoices', 'Receipts', 'Social Feed', 'Slideshow', 'Medicals',
-        self::MEAL_PLANNER, self::TIMETABLE_EDITOR, self::CHORES_MANAGER,
-    ];
-
-    /**
-     * Who may change the chores plan, the chore library and the children.
-     * Everyone with Chores access can view the plan and tick chores done.
-     */
-    public const CHORES_MANAGER = 'Chores Manager';
-
-    public static function canManageChores(): bool
-    {
-        return self::hasAccess('Chores') && self::hasAccess(self::CHORES_MANAGER);
-    }
+    public const PERMISSIONED_APPS = [];
 
     /**
      * Admin-only areas — never assignable. (Messages is the site's contact-
@@ -78,38 +45,13 @@ class AuthService
     public const ADMIN_ONLY_APPS = ['users', 'messages'];
 
     /**
-     * Capabilities that ride along with an app (app => capability) — shown
-     * right after that app in the admin's "App access" boxes.
+     * Capabilities that ride along with an app (app => capability), stored in
+     * permitted_apps like an app and shown right after that app in the
+     * admin's "App access" boxes — e.g. ['Reports' => 'Report Editor'].
+     * List the capability in PERMISSIONED_APPS too, then check it with
+     * hasAccess('Report Editor').
      */
-    public const CAPABILITIES = [
-        'Meals'     => self::MEAL_PLANNER,
-        'Timetable' => self::TIMETABLE_EDITOR,
-        'Chores'    => self::CHORES_MANAGER,
-    ];
-
-    /**
-     * Who may change the (shared) family timetable. Everyone with Timetable
-     * access can view it.
-     */
-    public const TIMETABLE_EDITOR = 'Timetable Editor';
-
-    public static function canEditTimetable(): bool
-    {
-        return self::hasAccess('Timetable') && self::hasAccess(self::TIMETABLE_EDITOR);
-    }
-
-    /**
-     * Not an app but a capability, stored in permitted_apps like one: who may
-     * create (and then edit their own) meal plans. Everyone with Meals can
-     * view every plan. Granted per user in the admin's "App access" boxes.
-     */
-    public const MEAL_PLANNER = 'Meal Planner';
-
-    /** May the current user create meal plans (and edit the ones they own)? */
-    public static function canPlanMeals(): bool
-    {
-        return self::hasAccess('Meals') && self::hasAccess(self::MEAL_PLANNER);
-    }
+    public const CAPABILITIES = [];
 
     /**
      * Check if the user has access to a specific app.
@@ -262,7 +204,8 @@ class AuthService
     }
 
     /**
-     * Determine if the current user is Cat (ID 1).
+     * Determine if the current user is user #1 — the first admin, created by
+     * the DB reset; the only account that sees the header DB Reset button.
      */
     public static function isCat(): bool
     {
@@ -276,16 +219,11 @@ class AuthService
     public static function isLoggedIn(): bool
     {
         self::ensureSession();
-        // A user is considered logged in if either a user_id for a backend user
-        // OR a landlord_id for a landlord is present in the session.
-        $isUserLoggedIn = isset($_SESSION['user_id']) && (int)$_SESSION['user_id'] > 0;
-        $isLandlordLoggedIn = isset($_SESSION['landlord_id']) && (int)$_SESSION['landlord_id'] > 0;
-        $isTenantLoggedIn = isset($_SESSION['tenant_id']) && (int)$_SESSION['tenant_id'] > 0;
-        return $isUserLoggedIn || $isLandlordLoggedIn || $isTenantLoggedIn;
+        return isset($_SESSION['user_id']) && (int)$_SESSION['user_id'] > 0;
     }
 
     /**
-     * Attempt to authenticate a user against the legacy users table.
+     * Attempt to authenticate a user against the users table.
      * Only current accounts (status_id = User::STATUS_CURRENT) may sign in.
      */
     public static function login(string $email, string $password): array

@@ -8,25 +8,22 @@ namespace Src\Controller;
 use App\Models\Message;
 use App\Models\User;
 use App\Traits\RecentActivityLogger;
-use Illuminate\Database\Capsule\Manager as Capsule;
 use Src\Service\AuthService;
 use Src\Service\MailService;
 
 /**
- * Messages — the site's contact-form inbox (admins only), on the legacy
+ * Messages — the site's contact-form inbox (admins only), on the
  * `messages` table.
  *
  * A visitor's contact-form message starts a thread (conversation_id); an
  * admin's reply is saved in the same thread and emailed to the visitor.
- * Legacy rows without a conversation_id are a thread of their own, keyed
- * "m{id}" until someone replies (then they get a conversation_id).
+ * Rows without a conversation_id are a thread of their own, keyed "m{id}"
+ * until someone replies (then they get a conversation_id).
  *
- * Fixed from the previous version: the public endpoint only accepts the four
- * form fields (it used to take is_sent / parent_id from the request, which
- * let anyone make the server email any text to any thread's address), input
- * is validated, there's a honeypot and rate limits, ids are assigned (the
- * legacy column doesn't auto-increment, so saves failed), and reading,
- * archiving and deleting work on whole threads.
+ * The public endpoint only accepts the four form fields (never is_sent /
+ * parent_id, so nobody can make the server email arbitrary text), input is
+ * validated, there's a honeypot and rate limits, and reading, archiving and
+ * deleting work on whole threads.
  */
 class MessagesController
 {
@@ -269,7 +266,7 @@ class MessagesController
             }
 
             $me = User::find($userId);
-            $myName = (string) ($me->full_name ?? 'CatScript Apps');
+            $myName = (string) ($me->full_name ?? ($_ENV['APP_NAME'] ?? 'The team'));
             $subject = preg_match('/^re:/i', $t['subject']) ? $t['subject'] : 'Re: ' . $t['subject'];
 
             $sent = MailService::send($t['email'], $subject, self::replyEmail($t, $body, $myName), [], $me->email ?? null);
@@ -277,7 +274,7 @@ class MessagesController
                 return ['success' => false, 'messages' => ['The email could not be sent — nothing was saved. Please try again.']];
             }
 
-            // A legacy single-message thread gets a conversation id now
+            // A single-message thread gets a conversation id now
             $conversation = $key;
             if (str_starts_with($key, 'm')) {
                 $conversation = bin2hex(random_bytes(8));
@@ -310,7 +307,7 @@ class MessagesController
         return '<div style="font-family:Quicksand,Arial,sans-serif;color:#111827;line-height:1.6">'
             . '<p>Hello ' . $e(explode(' ', $t['name'])[0]) . ',</p>'
             . '<div style="white-space:pre-line">' . $e($body) . '</div>'
-            . '<p>— ' . $e($from) . ', CatScript Apps</p>'
+            . '<p>— ' . $e($from) . ', ' . $e($_ENV['APP_NAME'] ?? '') . '</p>'
             . ($original ? '<div style="margin-top:24px;border-left:3px solid #e5e7eb;padding-left:12px;color:#6b7280;font-size:13px">'
                 . '<p style="margin:0 0 4px">You wrote' . ($original['at'] ? ' on ' . $e(date('M j, Y', strtotime($original['at']))) : '') . ':</p>'
                 . '<div style="white-space:pre-line">' . $e(mb_strimwidth($original['body'], 0, 1500, '…')) . '</div></div>' : '')
@@ -352,14 +349,10 @@ class MessagesController
 
     // ============================================================
 
-    /** Insert with the next id (the legacy column doesn't auto-increment). */
     private static function insert(array $fields): Message
     {
-        return Capsule::connection()->transaction(function () use ($fields) {
-            $m = new Message($fields);
-            $m->id = (int) Capsule::table('messages')->lockForUpdate()->max('id') + 1;
-            $m->save();
-            return $m;
-        });
+        $m = new Message($fields);
+        $m->save();
+        return $m;
     }
 }

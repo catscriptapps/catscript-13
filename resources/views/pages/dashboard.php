@@ -13,8 +13,6 @@ declare(strict_types=1);
 /** @var string $assetBase */
 /** @var \App\Models\User|null $currentUser */
 
-use App\Models\Follow;
-use App\Models\Post;
 use App\Models\User;
 use Src\Config\NavigationConfig;
 use Src\Controller\RecentActivitiesController;
@@ -33,19 +31,13 @@ $greeting = $hour < 12 ? 'Good morning' : ($hour < 17 ? 'Good afternoon' : 'Good
 // Apps this user can open, minus the page they're already on.
 $apps = array_filter($navLinks, fn($name) => $name !== 'Dashboard', ARRAY_FILTER_USE_KEY);
 
-// Social stats only for people who have the Social Feed
-$stats = AuthService::hasAccess('Social Feed')
-    ? [
-        ['label' => 'Your Posts', 'value' => Post::where('orig_user_id', $userId)->count()],
-        ['label' => 'Followers', 'value' => Follow::where('following_id', $userId)->count()],
-        ['label' => 'Following', 'value' => Follow::where('follower_id', $userId)->count()],
-    ]
-    : [['label' => 'Your Apps', 'value' => count($apps)]];
+$stats = [['label' => 'Your Apps', 'value' => count($apps)]];
 if ($isAdmin) {
     $stats[] = ['label' => 'Users', 'value' => User::count()];
+    $stats[] = ['label' => 'Unread', 'value' => \Src\Controller\MessagesController::unreadCount()];
 }
 
-// Legacy CatScript apps still being rebuilt (Src\Config\AppsCatalog).
+// Apps announced on the home page but not built yet (Src\Config\AppsCatalog).
 $comingSoon = \Src\Config\AppsCatalog::comingSoon();
 $appSections = NavigationConfig::sections(true);
 $upcoming = NavigationConfig::upcoming();
@@ -70,7 +62,7 @@ $avatarUrl = !empty($currentUser?->avatar_url) ? $assetBase . 'images/uploads/av
                 <div class="min-w-0">
                     <p class="text-sm text-secondary-200"><?= date('l, F j') ?></p>
                     <h1 class="text-2xl sm:text-3xl font-bold tracking-tight"><?= $greeting ?>, <?= htmlspecialchars($firstName) ?></h1>
-                    <p class="text-sm text-secondary-200 mt-0.5">Here's what's happening across your CatScript apps.</p>
+                    <p class="text-sm text-secondary-200 mt-0.5">Here's what's happening across your apps.</p>
                 </div>
             </div>
 
@@ -142,7 +134,7 @@ $avatarUrl = !empty($currentUser?->avatar_url) ? $assetBase . 'images/uploads/av
             <div class="flex items-center justify-between gap-4 px-6 pt-6 pb-4">
                 <div>
                     <h2 class="text-base font-bold text-gray-900 dark:text-white">Recent activity</h2>
-                    <p class="text-xs text-gray-500 dark:text-gray-400"><?= $isAdmin ? 'Everyone across CatScript Apps' : 'Your latest actions' ?></p>
+                    <p class="text-xs text-gray-500 dark:text-gray-400"><?= $isAdmin ? 'Everyone, across every app' : 'Your latest actions' ?></p>
                 </div>
                 <a href="<?= $baseUrl ?>history" data-partial
                     class="group inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold text-primary-600 dark:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-950/40 transition-colors">

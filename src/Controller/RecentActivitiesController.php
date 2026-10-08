@@ -70,9 +70,8 @@ class RecentActivitiesController
         // Logic for icon selection
         $row['icon'] = match ($activity->entity_type) {
             'Users'     => '👤',
-            'Cash Flow' => '💰',
-            'CashFlow'  => '💰',
-            'Invoices'  => '📄',
+            'Message'   => '✉️',
+            'Site'      => '🖼️',
             'FAQ'       => '❓',
             default     => '⚙️'
         };

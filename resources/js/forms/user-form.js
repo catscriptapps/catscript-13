@@ -17,22 +17,13 @@ import { formSection, TONE } from './form-kit.js';
  * modal opens (modals/users-modal.js).
  */
 
-/** Per-app tile look (full class strings so Tailwind keeps them). */
-const APP_LOOK = {
-    'Tasks':       { icon: '✅', tile: 'peer-checked:border-sky-400 peer-checked:bg-sky-50 dark:peer-checked:bg-sky-950/40', badge: 'from-sky-400 to-blue-500' },
-    'Cash Flow':   { icon: '💰', tile: 'peer-checked:border-emerald-400 peer-checked:bg-emerald-50 dark:peer-checked:bg-emerald-950/40', badge: 'from-emerald-400 to-teal-500' },
-    'Meals':       { icon: '🍽️', tile: 'peer-checked:border-lime-400 peer-checked:bg-lime-50 dark:peer-checked:bg-lime-950/40', badge: 'from-lime-400 to-green-500' },
-    'Timetable':   { icon: '🗓️', tile: 'peer-checked:border-indigo-400 peer-checked:bg-indigo-50 dark:peer-checked:bg-indigo-950/40', badge: 'from-indigo-400 to-violet-500' },
-    'Medicals':    { icon: '🩺', tile: 'peer-checked:border-rose-400 peer-checked:bg-rose-50 dark:peer-checked:bg-rose-950/40', badge: 'from-rose-400 to-pink-500' },
-    'Chores':      { icon: '✨', tile: 'peer-checked:border-teal-400 peer-checked:bg-teal-50 dark:peer-checked:bg-teal-950/40', badge: 'from-teal-400 to-cyan-500' },
-    'Pictures':    { icon: '🖼️', tile: 'peer-checked:border-pink-400 peer-checked:bg-pink-50 dark:peer-checked:bg-pink-950/40', badge: 'from-pink-400 to-rose-500' },
-    'Customers':   { icon: '🤝', tile: 'peer-checked:border-amber-400 peer-checked:bg-amber-50 dark:peer-checked:bg-amber-950/40', badge: 'from-amber-400 to-orange-500' },
-    'Invoices':    { icon: '🧾', tile: 'peer-checked:border-violet-400 peer-checked:bg-violet-50 dark:peer-checked:bg-violet-950/40', badge: 'from-violet-400 to-purple-500' },
-    'Receipts':    { icon: '🧾', tile: 'peer-checked:border-fuchsia-400 peer-checked:bg-fuchsia-50 dark:peer-checked:bg-fuchsia-950/40', badge: 'from-fuchsia-400 to-pink-500' },
-    'Social Feed': { icon: '💬', tile: 'peer-checked:border-rose-400 peer-checked:bg-rose-50 dark:peer-checked:bg-rose-950/40', badge: 'from-rose-400 to-red-500' },
-    'Messages':    { icon: '✉️', tile: 'peer-checked:border-cyan-400 peer-checked:bg-cyan-50 dark:peer-checked:bg-cyan-950/40', badge: 'from-cyan-400 to-sky-500' },
-    'Slideshow':   { icon: '🎞️', tile: 'peer-checked:border-orange-400 peer-checked:bg-orange-50 dark:peer-checked:bg-orange-950/40', badge: 'from-orange-400 to-amber-500' },
-};
+/**
+ * Per-app tile look (full class strings so Tailwind keeps them). Add one when
+ * you register a new permissioned app (AuthService::PERMISSIONED_APPS), e.g.
+ *   'Reports': { icon: '📊', tile: 'peer-checked:border-sky-400 peer-checked:bg-sky-50 dark:peer-checked:bg-sky-950/40', badge: 'from-sky-400 to-blue-500' },
+ * Apps without one use APP_DEFAULT.
+ */
+const APP_LOOK = {};
 const APP_DEFAULT = { icon: '⭐', tile: 'peer-checked:border-primary-400 peer-checked:bg-primary-50 dark:peer-checked:bg-primary-950/40', badge: 'from-primary-400 to-amber-500' };
 
 /** Role tiles: Admin gets a crown; the rest cycle through these. */
@@ -70,13 +61,10 @@ export function userForm({
     const dataEncodedIdAttr = encodedId ? `data-encoded-id="${escapeHtml(encodedId)}"` : '';
     const e = (v) => escapeHtml(String(v ?? ''));
 
-    // Capabilities (Meal Planner, …) are listed under the app they belong to
+    // Capabilities (AuthService::CAPABILITIES) are listed under the app they belong to
     const capabilityOf = window.APP_CONFIG?.appCapabilities || {};
-    const capabilityHint = {
-        'Meal Planner': 'can create meal plans and edit their own',
-        'Timetable Editor': 'can change the family timetable',
-        'Chores Manager': 'can plan chores, the library and the children',
-    };
+    // Optional one-line hint per capability, e.g. { 'Report Editor': 'can edit any report' }
+    const capabilityHint = {};
 
     const inputClasses = `
         block w-full rounded-xl
@@ -226,8 +214,7 @@ export function userForm({
             <input type="hidden" name="permittedAppsPresent" value="1" />
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 ${topApps.map((app) => {
-                    // New accounts start with the Social Feed (untick to leave it out)
-                    const on = (mode === 'add' && app === 'Social Feed') || permittedApps.includes(app);
+                    const on = permittedApps.includes(app);
                     const extras = appOptions.filter((c) => capabilityOf[c] === app);
                     const look = APP_LOOK[app] || APP_DEFAULT;
                     return `

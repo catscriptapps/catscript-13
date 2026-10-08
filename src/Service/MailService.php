@@ -59,7 +59,7 @@ class MailService
             $password = $_ENV['MAIL_PASSWORD'] ?? '';
             $encryption = $_ENV['MAIL_ENCRYPTION'] ?? ''; // 'tls' | 'ssl' | ''
             $fromAddress = $_ENV['MAIL_FROM_ADDRESS'] ?? 'noreply@catscriptapps.com';
-            $fromName = $_ENV['MAIL_FROM_NAME'] ?? 'CatScript Apps';
+            $fromName = $_ENV['MAIL_FROM_NAME'] ?? ($_ENV['APP_NAME'] ?? 'CatScript-13');
 
             $mail->isSMTP();
             $mail->Host = $host;

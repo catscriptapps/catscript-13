@@ -24,12 +24,14 @@ import { TONE, formSection, kitInput, kitLabel, kitSubmit, kitGhost } from '../f
 const base = () => window.APP_CONFIG?.baseUrl || '/';
 const HERO_SLIDE_MS = 8 * 1000;
 const AVATARS = ['from-orange-400 to-rose-500', 'from-sky-400 to-indigo-500', 'from-emerald-400 to-teal-600', 'from-violet-400 to-fuchsia-500', 'from-amber-400 to-orange-500', 'from-cyan-400 to-sky-600', 'from-lime-400 to-emerald-500', 'from-pink-400 to-rose-500'];
-/** Same emoji as the user form's app tiles (forms/user-form.js). */
-const APP_ICON = {
-  Tasks: '✅', 'Cash Flow': '💰', Meals: '🍽️', Timetable: '🗓️', Chores: '✨', Medicals: '🩺', Pictures: '🖼️', Customers: '🤝', Invoices: '🧾',
-  Receipts: '🧾', 'Social Feed': '💬', Slideshow: '🎞️', 'Meal Planner': '👩‍🍳', 'Timetable Editor': '✏️', 'Chores Manager': '🧑‍🏫',
-};
-const CAPABILITY = ['Meal Planner', 'Timetable Editor', 'Chores Manager'];
+/**
+ * Emoji per permissioned app (AuthService::PERMISSIONED_APPS), same as the
+ * user form's app tiles (forms/user-form.js) — add one when you register a
+ * new app; apps without one show ⭐.
+ */
+const APP_ICON = {};
+/** Capabilities (AuthService::CAPABILITIES) ride along with an app rather than being apps. */
+const CAPABILITY = Object.keys(window.APP_CONFIG?.appCapabilities || {});
 
 let data = { users: [], grantable: [], today: '' };
 let state = { q: '', filter: 'all', sort: 'name' };
@@ -190,7 +192,7 @@ function renderHero() {
     <div class="grid gap-6 lg:grid-cols-5">
       <div class="lg:col-span-3 min-w-0">
         <span class="inline-flex items-center gap-2 rounded-full bg-white/10 ring-1 ring-white/15 px-3 py-1 text-xs font-semibold">${svg(ICON.users, 'h-3.5 w-3.5')} Admin · Users</span>
-        <h1 class="mt-3 text-3xl sm:text-4xl font-bold tracking-tight drop-shadow-[0_2px_12px_rgba(0,0,0,0.35)]">${plural(active.length, 'person', 'people')} on CatScript</h1>
+        <h1 class="mt-3 text-3xl sm:text-4xl font-bold tracking-tight drop-shadow-[0_2px_12px_rgba(0,0,0,0.35)]">${plural(active.length, 'person', 'people')} on ${escapeHtml(window.APP_CONFIG?.appName || 'the team')}</h1>
         <p class="mt-2 text-base text-secondary-50">Accounts, roles and who can open which app. ${seenWeek.length ? `${plural(seenWeek.length, 'person', 'people')} active this week.` : ''}</p>
         <div class="mt-5 grid grid-cols-2 sm:grid-cols-4 gap-3">
           ${tile(active.length, 'Active', `${plural(users.length, 'account')} in all`, 'text-emerald-300', 'active')}

@@ -36,7 +36,7 @@ endif;
     <div id="chat-widget-panel" class="hidden mb-4 w-[22rem] max-w-[calc(100vw-3rem)] h-[30rem] max-h-[calc(100vh-11rem)] bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl shadow-2xl flex flex-col overflow-hidden">
         <div class="flex items-center justify-between px-4 py-3 bg-primary-600 text-white flex-shrink-0">
             <div>
-                <h4 class="text-sm font-bold">Chat with CatScript Apps</h4>
+                <h4 class="text-sm font-bold">Chat with <?= htmlspecialchars($appName) ?></h4>
                 <p class="text-xs text-primary-100">We typically reply within a few minutes.</p>
             </div>
             <button type="button" id="chat-widget-close" aria-label="Close chat" class="p-1 rounded-lg hover:bg-white/10 transition-colors">

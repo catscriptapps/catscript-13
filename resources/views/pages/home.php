@@ -6,11 +6,10 @@ declare(strict_types=1);
 /**
  * CatScript Apps - Guest Home Page
  *
- * Layout adapted from the Gonachi Real Estate World landing page (hero
- * banner + counters, spotlight row, five-up category cards, module grid
- * with Live / Coming Soon badges, closing CTA). The module list is the
- * legacy CatScript Apps suite, from Src\Config\AppsCatalog — flip an app's
- * 'live' flag there (and give it a 'slug') as each one is rebuilt.
+ * Hero banner, spotlight row, category cards, module grid with Live /
+ * Coming Soon badges, closing CTA. The module list comes from
+ * Src\Config\AppsCatalog — add your apps there (flip 'live' and give it a
+ * 'slug' when one ships) and this page follows.
  *
  * @var bool $isLoggedIn
  * @var string $baseUrl
@@ -32,16 +31,6 @@ $modules = AppsCatalog::apps();
 
 $liveModules = array_values(array_filter($modules, fn($m) => $m['live']));
 $liveCount = count($liveModules);
-
-// Apps a guest can try right here in the browser (no account, nothing saved
-// on the server) — see 'demo' in AppsCatalog.
-$demoModules = $isLoggedIn ? [] : array_values(array_filter($liveModules, fn($m) => !empty($m['demo'])));
-$isDemo = fn(array $m): bool => !$isLoggedIn && !empty($m['demo']);
-// Once most apps have a demo, a list of names gets long — say it plainly instead
-$allDemo = count($demoModules) > 3;
-$demoPhrase = $allDemo
-    ? 'Try any app in your browser'
-    : 'Take ' . human_list(array_map(fn($m) => htmlspecialchars($m['name']), $demoModules)) . ' for a spin in your browser';
 ?>
 <?php
 // The home page's TV screensaver (home-page.js): the slideshow, clearly,
@@ -63,10 +52,10 @@ $saver = [
 
         <div class="relative max-w-2xl p-6 sm:px-10 sm:py-12" data-aos="fade-up">
             <h1 class="text-3xl sm:text-4xl font-bold tracking-tight leading-[1.12] drop-shadow-[0_2px_12px_rgba(0,0,0,0.35)]">
-                Every app you need for<br class="hidden sm:inline">
-                <span class="text-primary-300">home and business</span>
+                Every app you need,<br class="hidden sm:inline">
+                <span class="text-primary-300">behind one sign-in</span>
             </h1>
-            <p class="mt-3 text-base text-secondary-50 max-w-xl">One sign-in for chores, tasks, meals, cash flow, invoices, and more.</p>
+            <p class="mt-3 text-base text-secondary-50 max-w-xl">One account, one dashboard, and a growing set of apps that work together.</p>
 
             <div class="mt-6 flex flex-col sm:flex-row gap-3">
                 <?php if ($isLoggedIn): ?>
@@ -83,19 +72,6 @@ $saver = [
                 </a>
             </div>
 
-            <?php if ($demoModules): ?>
-                <p class="mt-5 text-sm text-secondary-100">
-                    <?php if ($allDemo): ?>
-                        No account? Every app has a try-it version —
-                        <a href="#the-apps" data-scroll-to="the-apps" class="font-semibold text-white underline decoration-white/40 underline-offset-4 hover:decoration-white">pick one</a>
-                        and play; nothing leaves your browser.
-                    <?php else: ?>
-                        No account? Try
-                        <?= human_list(array_map(fn($m) => '<a href="' . $baseUrl . $m['slug'] . '" data-partial class="font-semibold text-white underline decoration-white/40 underline-offset-4 hover:decoration-white">' . htmlspecialchars($m['name']) . '</a>', $demoModules)) ?>
-                        in your browser.
-                    <?php endif; ?>
-                </p>
-            <?php endif; ?>
         </div>
 
         <?php if (count($slideshowImages ?? []) > 1): ?>
@@ -114,9 +90,9 @@ $saver = [
             <div aria-hidden="true" class="pointer-events-none absolute -right-16 -bottom-16 h-48 w-48 rounded-full bg-primary-100/70 dark:bg-primary-900/20 blur-2xl"></div>
             <span class="relative text-xs font-semibold tracking-[0.2em] text-primary-600 dark:text-primary-400 uppercase mb-2">Built To Work Together</span>
             <h3 class="relative text-xl font-bold text-gray-900 dark:text-white">Small Apps, One Home</h3>
-            <p class="relative text-sm text-gray-500 dark:text-gray-400 mt-2 max-w-2xl">Each CatScript app does one job well — and they all share your profile, messages, and activity history, so moving between them feels like one app.</p>
+            <p class="relative text-sm text-gray-500 dark:text-gray-400 mt-2 max-w-2xl">Each app does one job well — and they all share your profile, messages, and activity history, so moving between them feels like one app.</p>
             <div class="relative mt-5 flex flex-wrap gap-2">
-                <?php foreach (['One sign-in', 'Shared profile', 'Private money', 'Light & dark', 'Phone-friendly'] as $perk): ?>
+                <?php foreach (['One sign-in', 'Shared profile', 'Per-person access', 'Light & dark', 'Phone-friendly'] as $perk): ?>
                     <span class="inline-flex items-center gap-1.5 rounded-full bg-gray-100 dark:bg-gray-800 px-3 py-1 text-xs font-semibold text-gray-700 dark:text-gray-300">
                         <svg class="h-3.5 w-3.5 text-primary-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" /></svg><?= $perk ?>
                     </span>
@@ -124,8 +100,8 @@ $saver = [
             </div>
         </div>
         <div class="relative overflow-hidden flex items-center justify-center rounded-2xl bg-gradient-to-br from-primary-50 via-white to-amber-50 dark:from-gray-900 dark:via-gray-900 dark:to-primary-950/30 border border-gray-200 dark:border-gray-800 shadow-sm p-6 h-44 lg:h-auto" data-aos="fade-up" data-aos-delay="100">
-            <img src="<?= $assetBase ?>images/logo/logo-light.jpg" alt="CatScript Apps" class="animate-float-soft max-h-24 w-auto block dark:hidden drop-shadow-lg" />
-            <img src="<?= $assetBase ?>images/logo/logo-dark.jpg" alt="CatScript Apps" class="animate-float-soft max-h-24 w-auto hidden dark:block drop-shadow-lg" />
+            <img src="<?= $assetBase ?>images/logo/logo-light.jpg" alt="<?= htmlspecialchars($appName) ?>" class="animate-float-soft max-h-24 w-auto block dark:hidden drop-shadow-lg" />
+            <img src="<?= $assetBase ?>images/logo/logo-dark.jpg" alt="<?= htmlspecialchars($appName) ?>" class="animate-float-soft max-h-24 w-auto hidden dark:block drop-shadow-lg" />
         </div>
     </div>
 
@@ -134,7 +110,7 @@ $saver = [
         <div class="flex items-center justify-between mb-4" data-aos="fade-up">
             <h3 class="text-xl font-bold text-gray-900 dark:text-white">Built For Every Part Of Your Day</h3>
         </div>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             <?php foreach ($categories as $i => $category): ?>
                 <div class="group relative overflow-hidden flex flex-col bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-5 shadow-sm hover:-translate-y-1 hover:shadow-xl transition-all duration-300"
                     data-aos="fade-up" data-aos-delay="<?= $i * 80 ?>">
@@ -145,8 +121,8 @@ $saver = [
                     <h4 class="text-sm font-bold text-gray-900 dark:text-white mb-1"><?= htmlspecialchars($category['name']) ?></h4>
                     <p class="text-xs text-gray-500 dark:text-gray-400 flex-1"><?= htmlspecialchars($category['text']) ?></p>
                     <div class="mt-4 flex flex-wrap gap-1.5">
-                        <?php foreach ($category['apps'] as $appName): ?>
-                            <span class="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-300"><?= htmlspecialchars($appName) ?></span>
+                        <?php foreach ($category['apps'] as $catApp): ?>
+                            <span class="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-300"><?= htmlspecialchars($catApp) ?></span>
                         <?php endforeach; ?>
                     </div>
                 </div>
@@ -159,7 +135,7 @@ $saver = [
         <div class="flex flex-wrap items-end justify-between gap-3 mb-4" data-aos="fade-up">
             <div>
                 <h3 class="text-xl font-bold text-gray-900 dark:text-white">The Apps</h3>
-                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">The CatScript suite is being rebuilt app by app — each one goes live here as it lands.</p>
+                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Everything in the suite — new apps go live here as they land.</p>
             </div>
             <div class="flex items-center gap-3">
                 <div class="hidden sm:block w-32 h-2 rounded-full bg-gray-200 dark:bg-gray-800 overflow-hidden" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="<?= (int) round($liveCount / max(1, count($modules)) * 100) ?>" aria-label="Apps live">
@@ -201,7 +177,7 @@ $saver = [
                     <p class="relative text-xs text-gray-500 dark:text-gray-400"><?= htmlspecialchars($module['text']) ?></p>
                     <?php if ($isLink): ?>
                         <span class="relative mt-4 inline-flex items-center gap-1 text-xs font-semibold text-primary-600 dark:text-primary-400">
-                            <?= $isDemo($module) ? 'Try it in your browser — no account needed' : 'Open ' . htmlspecialchars($module['name']) ?>
+                            Open <?= htmlspecialchars($module['name']) ?>
                             <svg class="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
                         </span>
                     <?php endif; ?>
@@ -216,9 +192,7 @@ $saver = [
         <div aria-hidden="true" class="pointer-events-none absolute -bottom-24 right-1/4 h-56 w-56 rounded-full bg-amber-400/10 blur-3xl"></div>
         <div class="relative z-10 max-w-xl mx-auto">
             <h2 class="text-2xl sm:text-3xl font-bold text-white mb-3">Ready to get organised?</h2>
-            <p class="text-sm text-secondary-200 mb-6"><?= $demoModules
-                ? $demoPhrase . ', sign in to start using the apps, or get in touch and we\'ll let you know as each one goes live.'
-                : 'Sign in to start using the apps, or get in touch and we\'ll let you know as each one goes live.' ?></p>
+            <p class="text-sm text-secondary-200 mb-6">Sign in to start using the apps, or get in touch and we'll let you know as each new one goes live.</p>
             <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
                 <?php if ($isLoggedIn): ?>
                     <a href="<?= $baseUrl ?>dashboard" data-partial class="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3 bg-primary-500 hover:bg-primary-400 text-white font-bold text-sm rounded-xl shadow-lg shadow-primary-500/30 transition-all hover:-translate-y-0.5">

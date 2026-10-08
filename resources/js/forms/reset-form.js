@@ -6,7 +6,7 @@
 export const resetFormHTML = `
 <form id="reset-form" class="space-y-4" novalidate>
   <div id="reset-intro" class="text-sm text-gray-600 dark:text-gray-300 space-y-2">
-    <p>Applies any pending CatScript Apps database updates (new tables and columns). Existing tables and data are left untouched, and running it again is safe.</p>
+    <p>Applies any pending database updates (new tables and columns). Existing tables and data are left untouched, and running it again is safe.</p>
     <p class="font-semibold text-amber-700 dark:text-amber-400">Back up the database before you run this.</p>
   </div>
 

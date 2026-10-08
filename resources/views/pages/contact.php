@@ -179,7 +179,7 @@ $initials = fn(string $n) => strtoupper(implode('', array_map(fn($w) => mb_subst
             <section class="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-5 shadow-sm">
                 <h2 class="text-sm font-bold text-gray-900 dark:text-white">What happens next</h2>
                 <ol class="mt-4 space-y-4">
-                    <?php foreach ([['1', 'It lands in our inbox', 'Straight to the CatScript team — nothing automated in between.'], ['2', 'A real person reads it', 'Usually within a day, often sooner.'], ['3', 'We reply by email', 'To the address you gave. Just reply to keep the conversation going.']] as [$n, $t, $d]): ?>
+                    <?php foreach ([['1', 'It lands in our inbox', 'Straight to our team — nothing automated in between.'], ['2', 'A real person reads it', 'Usually within a day, often sooner.'], ['3', 'We reply by email', 'To the address you gave. Just reply to keep the conversation going.']] as [$n, $t, $d]): ?>
                         <li class="flex gap-3">
                             <span class="h-7 w-7 flex-shrink-0 rounded-lg bg-gradient-to-br from-primary-400 to-rose-500 text-white text-xs font-black flex items-center justify-center shadow-sm"><?= $n ?></span>
                             <div><p class="text-sm font-semibold text-gray-800 dark:text-gray-100"><?= $t ?></p><p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5"><?= $d ?></p></div>

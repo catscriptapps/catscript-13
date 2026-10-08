@@ -109,11 +109,11 @@ $isLoggedIn = false; // We force this for the reset screen
 
                     <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-4">Reset Mode Active</h2>
                     <p class="text-gray-600 dark:text-gray-400 mb-8">
-                        The system is currently locked for maintenance. Click the <strong>trash icon in the header</strong> to apply the pending database updates.
+                        The system is currently locked for maintenance. Click the <strong>trash icon in the header</strong> to install or update the database.
                     </p>
 
                     <p class="text-amber-700 dark:text-amber-400 font-bold mb-8">
-                        Existing data is left untouched — only new tables and columns are added.<br> Back up the database first.
+                        An empty database gets the full install (tables, starter data and the first admin from .env); existing data is never touched — only missing tables and columns are added.<br> Back up the database first.
                     </p>
 
                     <p class="mt-8 text-xs font-medium text-primary-600 uppercase tracking-widest">
@@ -130,7 +130,7 @@ $isLoggedIn = false; // We force this for the reset screen
 
                     <div class="hidden lg:block">
                         <span class="text-xs font-medium uppercase tracking-widest text-gray-400 dark:text-gray-600">
-                            A CatScript Application
+                            Powered by CatScript-13
                         </span>
                     </div>
                 </div>

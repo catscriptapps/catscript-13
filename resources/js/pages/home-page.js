@@ -131,7 +131,7 @@ function initScreensaver(page) {
         photoOpacity: 0.92,
         veils: ['bg-black/25', 'bg-black/40', 'bg-black/55'],
         nightPhotos: true,
-        brand: cfg.logo ? `<img src="${esc(cfg.logo)}" alt="CatScript Apps" class="saver-breathe h-14 sm:h-20 w-auto">` : '',
+        brand: cfg.logo ? `<img src="${esc(cfg.logo)}" alt="${esc(window.APP_CONFIG?.appName || '')}" class="saver-breathe h-14 sm:h-20 w-auto">` : '',
         paint,
         hint: 'Move the mouse or tap anywhere to return',
         onWake: () => { lastInteraction = Date.now(); },

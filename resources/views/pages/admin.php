@@ -2,11 +2,11 @@
 // /resources/views/pages/admin.php
 //
 // Unified admin hub — a single, discoverable landing point for every
-// admin-only tool (Users, Live Chat). The "tabs" below are real page links
+// admin-only tool (Users, Live Chats, Messages). The "tabs" below are real page links
 // (data-partial, so navigation is instant via the SPA router) rather than
 // client-side panel switching — this reuses each tool's existing,
 // already-working page and JS module instead of duplicating them inline.
-// As the CatScript apps are rebuilt, add their admin queues here.
+// As you add apps, add their admin queues here.
 //
 // @var bool $isLoggedIn
 // @var string $baseUrl
@@ -15,6 +15,7 @@ declare(strict_types=1);
 
 use App\Models\User;
 use Src\Controller\ChatController;
+use Src\Controller\MessagesController;
 use Src\Service\AuthService;
 
 if (!AuthService::isAdmin()) {
@@ -32,14 +33,14 @@ $currentPath = $path ?? '';
 $openConversations = ChatController::openConversations()->total();
 $unreadChats = ChatController::unreadCountForAdmin();
 $totalUsers = User::count();
+$unreadMessages = MessagesController::unreadCount();
 
 $tabs = [
     ['label' => 'Overview', 'href' => 'admin'],
     ['label' => 'Users', 'href' => 'users'],
     ['label' => 'Live Chats', 'href' => 'live-chat', 'badge' => $unreadChats],
-    ['label' => 'Slideshow', 'href' => 'slideshow'],
+    ['label' => 'Messages', 'href' => 'messages', 'badge' => $unreadMessages],
 ];
-$slideCount = count(\Src\Utils\CuratedPhotos::files());
 
 $statCards = [
     [
@@ -59,19 +60,19 @@ $statCards = [
         'icon' => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />',
     ],
     [
-        'label' => 'Slideshow Photos',
-        'value' => $slideCount,
-        'sub' => 'Banners & TV screensavers',
-        'href' => 'slideshow',
-        'accent' => 'text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-950/40',
-        'icon' => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 4v16M17 4v16M3 8h4m10 0h4M3 12h18M3 16h4m10 0h4M4 20h16a1 1 0 001-1V5a1 1 0 00-1-1H4a1 1 0 00-1 1v14a1 1 0 001 1z" />',
+        'label' => 'Contact Messages',
+        'value' => $unreadMessages,
+        'sub' => $unreadMessages > 0 ? 'Unread in the inbox' : 'Inbox is clear',
+        'href' => 'messages',
+        'accent' => 'text-cyan-600 dark:text-cyan-400 bg-cyan-50 dark:bg-cyan-950/40',
+        'icon' => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />',
     ],
 ];
 ?>
 <div class="space-y-6">
     <div>
         <h1 class="text-3xl font-bold tracking-tight text-gray-900 dark:text-white">Admin Dashboard</h1>
-        <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Everything across CatScript Apps that needs your attention, in one place.</p>
+        <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Everything that needs your attention, in one place.</p>
     </div>
 
     <!-- Tabs -->

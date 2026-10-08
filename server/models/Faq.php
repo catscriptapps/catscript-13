@@ -9,16 +9,14 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * A help-centre question — the legacy catscript_db `faqs` table (shared with
- * the legacy app). `category` is the topic key (FaqsController::CATEGORIES),
- * added by the 2026_10_01 migration; display_order is the position within
- * its topic. `id` doesn't auto-increment in the legacy schema, so
- * FaqsController assigns it (MAX + 1 under a lock).
+ * A help-centre question — the `faqs` table. `category` is the topic key
+ * (FaqsController::CATEGORIES); display_order is the position within its
+ * topic.
  */
 class Faq extends Model
 {
     protected $table = 'faqs';
-    public $incrementing = false;
+    public $incrementing = true;
     protected $keyType = 'int';
 
     public const STATUS_ACTIVE = 1;
