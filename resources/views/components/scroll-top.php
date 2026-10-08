@@ -8,11 +8,11 @@
   aria-label="Scroll to top"
   style="
   position: fixed;
-  /* Bottom-right corner. While it shows, the live-chat bubble (h-14,
-     components/chat-widget.php) lifts to sit above it (app.css). The 44px
-     button is centred under the 56px bubble: right 24px + (56 - 44) / 2. */
+  /* Bottom-right corner. While it shows, the live-chat bubble (also 44px,
+     h-11, components/chat-widget.php) lifts to sit directly above it
+     (app.css) — same size, same right edge (right-6 = 24px). */
   bottom: 24px;
-  right: 30px;
+  right: 24px;
   z-index: 9999;
   display: flex;
   align-items: center;

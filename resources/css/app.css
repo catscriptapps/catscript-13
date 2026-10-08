@@ -55,7 +55,7 @@ body {
 }
 
 /* Live-chat bubble (components/chat-widget.php): in the bottom-right corner,
-   and lifted to sit just above the scroll-to-top button (44px at bottom 24px)
+   and lifted to sit just above the scroll-to-top button (both 44px; it sits at bottom 24px)
    while that's showing — utils/scroll-to-top.js toggles body.scroll-top-visible. */
 #chat-widget {
     bottom: 24px;

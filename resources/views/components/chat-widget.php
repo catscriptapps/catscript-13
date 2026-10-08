@@ -19,8 +19,8 @@ if (AuthService::isAdmin()):
 ?>
 <div id="chat-widget" data-admin="true" class="fixed right-6 z-[9998] flex flex-col items-end">
     <a href="<?= htmlspecialchars($liveChatUrl) ?>" data-partial aria-label="Open the live chat inbox" data-tooltip="Live chat inbox"
-        class="relative flex-shrink-0 h-14 w-14 rounded-full bg-primary-600 hover:bg-primary-500 text-white shadow-xl flex items-center justify-center transition-all hover:scale-105">
-        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+        class="relative flex-shrink-0 h-11 w-11 rounded-full bg-primary-600 hover:bg-primary-500 text-white shadow-xl flex items-center justify-center transition-all hover:scale-105">
+        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
         <span data-live-chat-badge class="hidden absolute -top-1 -right-1 min-w-[1.25rem] h-5 px-1 rounded-full bg-red-600 text-white text-xs font-bold flex items-center justify-center border-2 border-white dark:border-gray-950">0</span>
     </a>
 </div>
@@ -67,9 +67,9 @@ endif;
     </div>
 
     <!-- Bubble -->
-    <button type="button" id="chat-widget-bubble" aria-label="Open chat" class="relative flex-shrink-0 h-14 w-14 rounded-full bg-primary-600 hover:bg-primary-500 text-white shadow-xl flex items-center justify-center transition-all hover:scale-105">
-        <svg id="chat-widget-bubble-icon-open" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
-        <svg id="chat-widget-bubble-icon-close" class="hidden h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+    <button type="button" id="chat-widget-bubble" aria-label="Open chat" class="relative flex-shrink-0 h-11 w-11 rounded-full bg-primary-600 hover:bg-primary-500 text-white shadow-xl flex items-center justify-center transition-all hover:scale-105">
+        <svg id="chat-widget-bubble-icon-open" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+        <svg id="chat-widget-bubble-icon-close" class="hidden h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
         <span id="chat-widget-unread-badge" class="hidden absolute -top-1 -right-1 min-w-[1.25rem] h-5 px-1 rounded-full bg-red-600 text-white text-xs font-bold flex items-center justify-center border-2 border-white dark:border-gray-950">0</span>
     </button>
 </div>
